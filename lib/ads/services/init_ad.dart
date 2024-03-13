@@ -26,7 +26,6 @@ import 'package:provider/provider.dart';
 import 'package:admob_easy/ads/sources.dart';
 
 mixin InitAd {
-
   int _numInterstitialLoadAttempts = 0;
 
   /// Asynchronously creates and loads an [interstitial] ad.
@@ -67,34 +66,48 @@ mixin InitAd {
   }
 
   /// Displays the loaded [interstitial] ad.
-  void showInterstitialAd(BuildContext context) {
+  void showInterstitialAd(
+      BuildContext context, {
+        void Function(InterstitialAd)? onAdShowedFullScreenContent,
+        void Function(InterstitialAd)? onAdDismissedFullScreenContent,
+        void Function(InterstitialAd, AdError)? onAdFailedToShowFullScreenContent,
+      }) {
     final adsProvider = Provider.of<AdsState>(context, listen: false);
 
     // Check if the interstitial ad is loaded
     if (adsProvider.interstitialAd == null) {
-      if (!context.mounted) return;
-      createInterstitialAd(context);
+      // If ad is not loaded, create a new one
+      if (!context.mounted) return; // Return if the context is not mounted
+      createInterstitialAd(context); // Create the interstitial ad
       return;
     }
 
     // Set callbacks and show the interstitial ad
     adsProvider.interstitialAd!.fullScreenContentCallback =
         FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          log('ad onAdShowedFullScreenContent.'),
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        log('$ad onAdDismissedFullScreenContent.');
-        adsProvider.interstitialAd = null;
-        ad.dispose();
-        if (!context.mounted) return;
-        createInterstitialAd(context);
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        log('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
-      },
-    );
+          onAdShowedFullScreenContent: onAdShowedFullScreenContent,
+          onAdDismissedFullScreenContent: (InterstitialAd ad) {
+            // Call the callback function when ad is dismissed
+            if (onAdDismissedFullScreenContent != null) {
+              onAdDismissedFullScreenContent(ad);
+            }
+            debugPrint('$ad onAdDismissedFullScreenContent.');
+            adsProvider.interstitialAd = null; // Set ad to null after it's dismissed
+            ad.dispose(); // Dispose the ad object
+            if (!context.mounted) return; // Return if the context is not mounted
+            createInterstitialAd(context); // Create a new interstitial ad
+          },
+          onAdFailedToShowFullScreenContent:
+              (InterstitialAd ad, AdError error) {
+            // Call the callback function when ad fails to show
+            if (onAdFailedToShowFullScreenContent != null) {
+              onAdFailedToShowFullScreenContent(ad, error);
+            }
+            debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
+            ad.dispose(); // Dispose the ad object
+          },
+        );
 
-    adsProvider.interstitialAd!.show();
+    adsProvider.interstitialAd!.show(); // Show the interstitial ad
   }
 }

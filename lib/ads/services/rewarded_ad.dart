@@ -25,7 +25,6 @@ import 'package:provider/provider.dart';
 import 'package:admob_easy/ads/sources.dart';
 
 mixin AppRewardedAd {
-
   // Counter for the number of load attempts for rewarded ads.
   int _numRewardedLoadAttempts = 0;
   final int _maxFailedLoadAttempts = 5;
@@ -64,33 +63,56 @@ mixin AppRewardedAd {
   }
 
   /// <------------------------ Show Rewarded Ad ------------------------>
-  // Function to show a rewarded ad.
-  Future<void> showRewardedAd(BuildContext context) async {
+// Function to show a rewarded ad.
+  Future<void> showRewardedAd(
+    BuildContext context, {
+    void Function(RewardedAd)? onAdShowedFullScreenContent,
+    void Function(RewardedAd)? onAdDismissedFullScreenContent,
+    void Function(RewardedAd, AdError)? onAdFailedToShowFullScreenContent,
+    void Function(AdWithoutView, RewardItem)? onUserEarnedReward,
+  }) async {
     final adsProvider = Provider.of<AdsState>(context, listen: false);
+
+    // Check if the rewarded ad is loaded
     if (adsProvider.rewardedAd == null) {
-      if(!context.mounted) return;
-      createRewardedAd(context);
+      if (!context.mounted) return; // Return if the context is not mounted
+      createRewardedAd(context); // Create the rewarded ad
       return;
     }
+
+    // Set callbacks and show the rewarded ad
     adsProvider.rewardedAd!.fullScreenContentCallback =
         FullScreenContentCallback(
-      onAdShowedFullScreenContent: (RewardedAd ad) =>
-          log('Reward ad onAdShowedFullScreenContent.'),
+      onAdShowedFullScreenContent: onAdShowedFullScreenContent,
+      // Set callback for when ad is shown
       onAdDismissedFullScreenContent: (RewardedAd ad) {
-        adsProvider.rewardedAd == null;
-        ad.dispose();
-        if(!context.mounted) return;
-        createRewardedAd(context);
+        // Call the callback function when ad is dismissed
+        if (onAdDismissedFullScreenContent != null) {
+          onAdDismissedFullScreenContent(ad);
+        }
+        adsProvider.rewardedAd == null; // Clear the reference to the ad
+        ad.dispose(); // Dispose the ad object
+        if (!context.mounted) return; // Return if the context is not mounted
+        createRewardedAd(context); // Create a new rewarded ad
       },
       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-        ad.dispose();
+        // Call the callback function when ad fails to show
+        if (onAdFailedToShowFullScreenContent != null) {
+          onAdFailedToShowFullScreenContent(ad, error);
+        }
+        ad.dispose(); // Dispose the ad object
       },
     );
 
+    // Show the rewarded ad
     await adsProvider.rewardedAd!.show(
-        onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-      // User earned a reward.
-      log('Earn with reward $RewardItem(${reward.amount}, ${reward.type})');
-    });
+      onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+        if (onUserEarnedReward != null) {
+          onUserEarnedReward(ad, reward);
+        }
+        // User earned a reward.
+        log('Earn with reward $RewardItem(${reward.amount}, ${reward.type})');
+      },
+    );
   }
 }
