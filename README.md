@@ -1,6 +1,6 @@
 ## **Admob Easy**
 
-This documentation provides guidance on integrating ads into a Flutter application using the provided helper classes.
+This documentation guides integrating ads into a Flutter application using the provided helper classes. AdMob Easy automatically handles the User Messaging Platform (UMP) for you, ensuring compliance with privacy regulations.
 
 To integrate ads into your Flutter application, follow these steps:
 
@@ -27,7 +27,7 @@ To integrate ads into your Flutter application, follow these steps:
 ```
 
 ### Initialize MobileAds
-To enable ad support, In main function initialize MobileAds by providing the necessary ad unit IDs and test devices:
+To enable ad support, In the Splash Screen initialize the AdmobEasy by providing the necessary ad unit IDs and test devices:
 ```
 AdmobEasy.instance.initialize(
   androidRewardedAdID: 'ca-app-pub-3940256099942544/5224354917',
@@ -43,7 +43,7 @@ Use the provided methods to create ad instances and load ads:
 ```
 AdmobEasy.instance.createRewardedAd(context); // To load rewarded ad
 AdmobEasy.instance.createInterstitialAd(context); // To load Interstitial ad
-AdmobEasy.instance.loadAppOpenAd(); // To load open app ad it will show the ad automatically after load
+AdmobEasy.instance.loadAppOpenAd(); // To load an open app ad it will show the ad automatically after load
 ```
 
 ### Show Ads
@@ -52,3 +52,5 @@ Once ads are loaded, show them using the respective methods:
 AdmobEasy.instance.showRewardedAd(context);
 AdmobEasy.instance.showInterstitialAd(context);
 ```
+
+### Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on <a href="https://github.com/matifdeveloper/admob_easy">GitHub</a>.
