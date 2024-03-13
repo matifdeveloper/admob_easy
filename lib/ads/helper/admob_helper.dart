@@ -35,17 +35,13 @@ import 'dart:io';
 import 'package:admob_easy/ads/sources.dart';
 
 // Class to handle Admob configuration and IDs.
-class AdmobHelper {
-  // Singleton instance to ensure a single configuration throughout the app.
-  static final AdmobHelper instance = AdmobHelper._privateConstructor();
-
-  AdmobHelper._privateConstructor();
+mixin AdmobHelper {
 
   // Map to store Admob IDs for different ad types and platforms.
   Map<String, String?> _adIds = {};
 
   // Method to initialize Admob IDs based on the platform.
-  void initializeAdIds({
+  void initialize({
     String? androidRewardedAdID,
     String? androidInitAdID,
     String? androidBannerAdID,

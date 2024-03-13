@@ -19,6 +19,7 @@
  */
 
 import 'dart:developer';
+import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:admob_easy/ads/sources.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +41,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
 
   Future<void> _init() async {
     BannerAd(
-      adUnitId: AdmobHelper.instance.bannerAdID,
+      adUnitId: AdmobEasy.instance.bannerAdID,
       request: const AdRequest(),
       size: AdSize.banner,
       listener: BannerAdListener(

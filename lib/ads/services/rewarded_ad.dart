@@ -19,15 +19,12 @@
  */
 
 import 'dart:developer';
+import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:admob_easy/ads/sources.dart';
 
-class AppRewardedAd {
-  // Create instance
-  static final AppRewardedAd instance = AppRewardedAd._privateConstructor();
-
-  AppRewardedAd._privateConstructor();
+mixin AppRewardedAd {
 
   // Counter for the number of load attempts for rewarded ads.
   int _numRewardedLoadAttempts = 0;
@@ -39,7 +36,7 @@ class AppRewardedAd {
     final adsProvider = Provider.of<AdsState>(context, listen: false);
 
     await RewardedAd.load(
-      adUnitId: AdmobHelper.instance.rewardedAdID,
+      adUnitId: AdmobEasy.instance.rewardedAdID,
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {

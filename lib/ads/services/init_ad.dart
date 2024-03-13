@@ -20,15 +20,12 @@
 
 import 'dart:developer';
 
+import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:admob_easy/ads/sources.dart';
 
-class InitAd {
-  // Create instance
-  static final InitAd instance = InitAd._privateConstructor();
-
-  InitAd._privateConstructor();
+mixin InitAd {
 
   int _numInterstitialLoadAttempts = 0;
 
@@ -46,7 +43,7 @@ class InitAd {
 
     // Load new interstitial ad
     await InterstitialAd.load(
-      adUnitId: AdmobHelper.instance.initAdID,
+      adUnitId: AdmobEasy.instance.initAdID,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {

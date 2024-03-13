@@ -20,6 +20,7 @@
 
 import 'dart:developer';
 
+import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:admob_easy/ads/sources.dart';
 
 /**
@@ -35,20 +36,16 @@ import 'package:admob_easy/ads/sources.dart';
 
 /// Start the [OpenAppAd] class
 
-class OpenAppAd {
-  // Create instance
-  static final OpenAppAd instance = OpenAppAd._privateConstructor();
-
-  OpenAppAd._privateConstructor();
+mixin OpenAppAd {
 
   /// App open ads area
   AppOpenAd? _appOpenAd;
   bool _isShowingAd = false;
 
   // Function to load an AppOpenAd.
-  void loadOpenAppAd() {
+  void loadAppOpenAd() {
     AppOpenAd.load(
-      adUnitId: AdmobHelper.instance.appOpenAdID,
+      adUnitId: AdmobEasy.instance.appOpenAdID,
       request: const AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {
@@ -88,7 +85,7 @@ class OpenAppAd {
         _isShowingAd = false;
         ad.dispose();
         _appOpenAd = null;
-        loadOpenAppAd();
+        loadAppOpenAd();
       },
     );
 
@@ -98,7 +95,7 @@ class OpenAppAd {
 
 /// Listens for app foreground events and shows app open ads.
 class AppLifecycleReactor {
-  final OpenAppAd appOpenAdManager = OpenAppAd.instance;
+  final AdmobEasy appOpenAdManager = AdmobEasy.instance;
 
   AppLifecycleReactor();
 
