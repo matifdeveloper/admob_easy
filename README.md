@@ -27,7 +27,7 @@ To integrate ads into your Flutter application, follow these steps:
 ```
 
 ### Initialize MobileAds
-To enable ad support, initialize MobileAds by providing the necessary ad unit IDs and test devices:
+To enable ad support, In main function initialize MobileAds by providing the necessary ad unit IDs and test devices:
 ```
 AdmobEasy.instance.initialize(
   androidRewardedAdID: 'ca-app-pub-3940256099942544/5224354917',
