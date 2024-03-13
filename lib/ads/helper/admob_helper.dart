@@ -19,7 +19,6 @@
  */
 
 import 'dart:io';
-import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:admob_easy/ads/helper/admob_ump_helper.dart';
 
 /**
