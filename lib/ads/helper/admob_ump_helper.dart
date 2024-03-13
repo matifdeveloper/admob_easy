@@ -25,11 +25,6 @@ import 'dart:developer';
 import 'package:async_preferences/async_preferences.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-/*
-*  AdmobHelper initialization in splash screen
-   AdmobHelper.instance.initialize();
-* */
-
 class AdmobUmp {
   // Singleton instance for AdmobHelper.
   static AdmobUmp instance = AdmobUmp._privateConstructor();
@@ -39,7 +34,7 @@ class AdmobUmp {
 
   /// Initializes Admob and handles consent forms if applicable.
   /// Returns a Future<FormError?> indicating the result of the initialization.
-  Future<FormError?> initialize() async {
+  Future<FormError?> initializeUMP() async {
     final completer = Completer<FormError?>();
     final params = ConsentRequestParameters(
         consentDebugSettings: ConsentDebugSettings(
@@ -134,11 +129,7 @@ class AdmobUmp {
     MobileAds.instance
       ..initialize()
       ..updateRequestConfiguration(
-        RequestConfiguration(testDeviceIds: [
-          '7C92BD192385F05DDBD6FC73370E2D63',
-          'c20517e4e1fd9ba4b221c722eea16122',
-          '0602F9670141BB564435655ACD4768D9'
-        ]),
+        RequestConfiguration(testDeviceIds: []),
       );
   }
 

@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 /*
  ********************************************************************************
 
@@ -20,6 +18,10 @@
  ********************************************************************************
  */
 
+import 'dart:io';
+import 'package:admob_easy/ads/admob_easy.dart';
+import 'package:admob_easy/ads/helper/admob_ump_helper.dart';
+
 /**
  * Testing ids
  * app id = ca-app-pub-3940256099942544~3347511713
@@ -27,16 +29,12 @@
  * init = ca-app-pub-3940256099942544/1033173712
  * banner = ca-app-pub-3940256099942544/6300978111
  * app open = ca-app-pub-3940256099942544/9257395921
- * **/
+ */
 
 ///
 
-import 'dart:io';
-import 'package:admob_easy/ads/sources.dart';
-
 // Class to handle Admob configuration and IDs.
 mixin AdmobHelper {
-
   // Map to store Admob IDs for different ad types and platforms.
   Map<String, String?> _adIds = {};
 
@@ -64,12 +62,8 @@ mixin AdmobHelper {
         'appOpen': Platform.isAndroid ? androidAppOpenAdID : iosAppOpenAdID,
       };
 
-      // Initializing Mobile Ads and updating request configuration with test IDs.
-      MobileAds.instance
-        ..initialize()
-        ..updateRequestConfiguration(
-          RequestConfiguration(testDeviceIds: testDevices),
-        );
+      /// Initializing Mobile Ads and updating request configuration with test IDs with UMP.
+      AdmobUmp.instance.initializeUMP();
     } catch (e) {
       // Throwing an exception if an error occurs during initialization.
       throw Exception("Error initializing Admob: $e");
