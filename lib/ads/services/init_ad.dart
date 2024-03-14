@@ -19,13 +19,12 @@
  */
 
 import 'dart:developer';
-
 import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:admob_easy/ads/sources.dart';
 
 mixin InitAd {
+  InterstitialAd? interstitialAd;
   int _numInterstitialLoadAttempts = 0;
 
   /// Asynchronously creates and loads an [interstitial] ad.
@@ -33,11 +32,10 @@ mixin InitAd {
       {bool load = true}) async {
     if (!load) return;
 
-    final adsProvider = Provider.of<AdsState>(context, listen: false);
 
     // Dispose existing ad if present
-    if (adsProvider.interstitialAd != null) {
-      adsProvider.interstitialAd!.dispose();
+    if (interstitialAd != null) {
+      interstitialAd!.dispose();
     }
 
     // Load new interstitial ad
@@ -47,14 +45,14 @@ mixin InitAd {
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
           log('$ad loaded');
-          adsProvider.interstitialAd = ad;
+          interstitialAd = ad;
           _numInterstitialLoadAttempts = 0;
-          adsProvider.interstitialAd!.setImmersiveMode(true);
+          interstitialAd!.setImmersiveMode(true);
         },
         onAdFailedToLoad: (LoadAdError error) {
           log('InterstitialAd failed to load: $error.');
           _numInterstitialLoadAttempts += 1;
-          adsProvider.interstitialAd = null;
+          interstitialAd = null;
 
           // Retry loading if attempts are less than 5
           if (_numInterstitialLoadAttempts < 5) {
@@ -72,10 +70,8 @@ mixin InitAd {
         void Function(InterstitialAd)? onAdDismissedFullScreenContent,
         void Function(InterstitialAd, AdError)? onAdFailedToShowFullScreenContent,
       }) {
-    final adsProvider = Provider.of<AdsState>(context, listen: false);
-
     // Check if the interstitial ad is loaded
-    if (adsProvider.interstitialAd == null) {
+    if (interstitialAd == null) {
       // If ad is not loaded, create a new one
       if (!context.mounted) return; // Return if the context is not mounted
       createInterstitialAd(context); // Create the interstitial ad
@@ -83,7 +79,7 @@ mixin InitAd {
     }
 
     // Set callbacks and show the interstitial ad
-    adsProvider.interstitialAd!.fullScreenContentCallback =
+    interstitialAd!.fullScreenContentCallback =
         FullScreenContentCallback(
           onAdShowedFullScreenContent: onAdShowedFullScreenContent,
           onAdDismissedFullScreenContent: (InterstitialAd ad) {
@@ -92,7 +88,7 @@ mixin InitAd {
               onAdDismissedFullScreenContent(ad);
             }
             debugPrint('$ad onAdDismissedFullScreenContent.');
-            adsProvider.interstitialAd = null; // Set ad to null after it's dismissed
+            interstitialAd = null; // Set ad to null after it's dismissed
             ad.dispose(); // Dispose the ad object
             if (!context.mounted) return; // Return if the context is not mounted
             createInterstitialAd(context); // Create a new interstitial ad
@@ -108,6 +104,6 @@ mixin InitAd {
           },
         );
 
-    adsProvider.interstitialAd!.show(); // Show the interstitial ad
+    interstitialAd!.show(); // Show the interstitial ad
   }
 }

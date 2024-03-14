@@ -19,7 +19,6 @@
  */
 
 export 'helper/admob_helper.dart';
-export 'state/ads_state.dart';
 export 'services/init_ad.dart';
 export 'services/open_app_ad.dart';
 export 'services/rewarded_ad.dart';
