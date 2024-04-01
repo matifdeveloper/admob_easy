@@ -1,3 +1,5 @@
-## 0.0.2
+## 0.0.3
 
-* Provider bug solved
+* Connectivity added
+* Admob Easy now check automatically the internet before loading
+* Additionally, users can check internet connectivity status

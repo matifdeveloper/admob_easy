@@ -32,6 +32,7 @@ mixin InitAd {
       {bool load = true}) async {
 
     if(!AdmobEasy.instance.isConnected.value || !load){
+      log('No Internet! Interstitial ad cannot load');
       return;
     }
 

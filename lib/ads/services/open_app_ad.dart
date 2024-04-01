@@ -46,6 +46,8 @@ mixin OpenAppAd {
   void loadAppOpenAd() {
 
     if(!AdmobEasy.instance.isConnected.value){
+
+      log('No Internet! App open ad cannot load');
       return;
     }
 

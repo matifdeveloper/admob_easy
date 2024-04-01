@@ -34,6 +34,7 @@ mixin AppRewardedAd {
   Future<void> createRewardedAd(BuildContext context) async {
 
     if(!AdmobEasy.instance.isConnected.value){
+      log('No Internet! Rewarded ad cannot load');
       return;
     }
 
