@@ -53,4 +53,21 @@ AdmobEasy.instance.showRewardedAd(context);
 AdmobEasy.instance.showInterstitialAd(context);
 ```
 
+### Internet Connectivity
+Admob Easy now automatically checks if the device is connected to mobile data or Wi-Fi before loading ads. Additionally, users can check internet connectivity status using the following methods:<br/>
+`AdmobEasy.instance.isConnected.value; // Returns true if connected, false otherwise`
+
+or
+
+```
+ValueListenableBuilder(
+  valueListenable: ConnectivityController.instance.isConnected,
+  builder: (_, value, child) {
+    return Text(value ? "Connected" : "No Internet");
+  },
+);
+```
+You can also initialize connectivity checking using:<br />
+`AdmobEasy.instance.initConnectivity(onOnline(){}, onOffline(){});`
+
 ### Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on <a href="https://github.com/matifdeveloper/admob_easy">GitHub</a>.
