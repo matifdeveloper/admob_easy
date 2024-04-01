@@ -44,6 +44,11 @@ mixin OpenAppAd {
 
   // Function to load an AppOpenAd.
   void loadAppOpenAd() {
+
+    if(!AdmobEasy.instance.isConnected.value){
+      return;
+    }
+
     AppOpenAd.load(
       adUnitId: AdmobEasy.instance.appOpenAdID,
       request: const AdRequest(),
@@ -57,7 +62,6 @@ mixin OpenAppAd {
           log('App open ad failed');
         },
       ),
-      orientation: AppOpenAd.orientationPortrait,
     );
   }
 

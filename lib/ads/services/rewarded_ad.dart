@@ -33,6 +33,10 @@ mixin AppRewardedAd {
   // Function to create a rewarded ad.
   Future<void> createRewardedAd(BuildContext context) async {
 
+    if(!AdmobEasy.instance.isConnected.value){
+      return;
+    }
+
     await RewardedAd.load(
       adUnitId: AdmobEasy.instance.rewardedAdID,
       request: const AdRequest(),

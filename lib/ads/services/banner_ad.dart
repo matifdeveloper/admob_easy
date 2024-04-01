@@ -40,6 +40,11 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
   }
 
   Future<void> _init() async {
+
+    if(!AdmobEasy.instance.isConnected.value){
+      return;
+    }
+
     BannerAd(
       adUnitId: AdmobEasy.instance.bannerAdID,
       request: const AdRequest(),

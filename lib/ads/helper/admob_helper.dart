@@ -19,6 +19,7 @@
  */
 
 import 'dart:io';
+import 'package:admob_easy/admob_easy.dart';
 import 'package:admob_easy/ads/helper/admob_ump_helper.dart';
 
 /**
@@ -61,6 +62,9 @@ mixin AdmobHelper {
         'appOpen': Platform.isAndroid ? androidAppOpenAdID : iosAppOpenAdID,
       };
 
+
+      /// Add the listener for internet connection
+      AdmobEasy.instance.initConnectivity();
       /// Initializing Mobile Ads and updating request configuration with test IDs with UMP.
       AdmobUmp.instance.initializeUMP();
     } catch (e) {

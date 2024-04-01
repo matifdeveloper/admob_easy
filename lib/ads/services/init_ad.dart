@@ -30,8 +30,10 @@ mixin InitAd {
   /// Asynchronously creates and loads an [interstitial] ad.
   Future<void> createInterstitialAd(BuildContext context,
       {bool load = true}) async {
-    if (!load) return;
 
+    if(!AdmobEasy.instance.isConnected.value || !load){
+      return;
+    }
 
     // Dispose existing ad if present
     if (interstitialAd != null) {
