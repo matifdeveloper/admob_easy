@@ -1,5 +1,3 @@
-## 0.0.3
+## 0.0.4
 
-* Connectivity added
-* Admob Easy now check automatically the internet before loading
-* Additionally, users can check internet connectivity status
+* Connectivity Plus upgrade

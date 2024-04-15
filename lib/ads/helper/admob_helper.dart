@@ -62,9 +62,9 @@ mixin AdmobHelper {
         'appOpen': Platform.isAndroid ? androidAppOpenAdID : iosAppOpenAdID,
       };
 
-
       /// Add the listener for internet connection
       AdmobEasy.instance.initConnectivity();
+
       /// Initializing Mobile Ads and updating request configuration with test IDs with UMP.
       AdmobUmp.instance.initializeUMP();
     } catch (e) {

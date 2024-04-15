@@ -37,16 +37,13 @@ import 'package:admob_easy/ads/sources.dart';
 /// Start the [OpenAppAd] class
 
 mixin OpenAppAd {
-
   /// App open ads area
   AppOpenAd? _appOpenAd;
   bool _isShowingAd = false;
 
   // Function to load an AppOpenAd.
   void loadAppOpenAd() {
-
-    if(!AdmobEasy.instance.isConnected.value){
-
+    if (!AdmobEasy.instance.isConnected.value) {
       log('No Internet! App open ad cannot load');
       return;
     }

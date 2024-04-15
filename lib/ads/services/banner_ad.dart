@@ -40,8 +40,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
   }
 
   Future<void> _init() async {
-
-    if(!AdmobEasy.instance.isConnected.value){
+    if (!AdmobEasy.instance.isConnected.value) {
       log('No Internet! Banner ad cannot load');
       return;
     }

@@ -60,4 +60,3 @@ mixin ConnectivityController {
     return false;
   }
 }
-

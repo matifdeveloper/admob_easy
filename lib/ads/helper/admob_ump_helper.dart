@@ -18,8 +18,6 @@
  ********************************************************************************
  */
 
-
-
 import 'dart:async';
 import 'dart:developer';
 import 'package:async_preferences/async_preferences.dart';
@@ -38,12 +36,12 @@ class AdmobUmp {
     final completer = Completer<FormError?>();
     final params = ConsentRequestParameters(
         consentDebugSettings: ConsentDebugSettings(
-          debugGeography: DebugGeography.debugGeographyEea,
-        ));
+      debugGeography: DebugGeography.debugGeographyEea,
+    ));
 
     ConsentInformation.instance.requestConsentInfoUpdate(
       params,
-          () async {
+      () async {
         if (await ConsentInformation.instance.isConsentFormAvailable()) {
           // Load Consent form if available.
           await _loadConsentForm();
@@ -53,7 +51,7 @@ class AdmobUmp {
         }
         completer.complete();
       },
-          (error) {
+      (error) {
         // Handle error during consent info update.
         completer.complete(error);
       },
@@ -68,10 +66,10 @@ class AdmobUmp {
 
     ConsentInformation.instance.requestConsentInfoUpdate(
       ConsentRequestParameters(),
-          () async {
+      () async {
         if (await ConsentInformation.instance.isConsentFormAvailable()) {
           ConsentForm.loadConsentForm(
-                (consentForm) {
+            (consentForm) {
               consentForm.show((formError) async {
                 // Continue with initialization after consent form is shown.
                 await _initialize();
@@ -79,7 +77,7 @@ class AdmobUmp {
                 log('');
               });
             },
-                (formError) {
+            (formError) {
               // Handle error loading consent form.
               completer.complete(false);
             },
@@ -88,7 +86,7 @@ class AdmobUmp {
           completer.complete(false);
         }
       },
-          (error) {
+      (error) {
         // Handle error during consent info update.
         completer.complete(false);
       },
@@ -102,7 +100,7 @@ class AdmobUmp {
     final completer = Completer<FormError?>();
 
     ConsentForm.loadConsentForm(
-          (consentForm) async {
+      (consentForm) async {
         final status = await ConsentInformation.instance.getConsentStatus();
         if (status == ConsentStatus.required) {
           // Show consent form if consent is required.
@@ -116,7 +114,7 @@ class AdmobUmp {
           completer.complete();
         }
       },
-          (formError) {
+      (formError) {
         // Handle error loading consent form.
         completer.complete(formError);
       },
@@ -142,5 +140,4 @@ class AdmobUmp {
     // Check if the 'IABTCF_gdprApplies' preference is set to 1 (indicating GDPR applies).
     return await preferences.getInt('IABTCF_gdprApplies') == 1;
   }
-
 }

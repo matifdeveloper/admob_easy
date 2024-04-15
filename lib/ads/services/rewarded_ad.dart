@@ -32,8 +32,7 @@ mixin AppRewardedAd {
   /// <------------------------ Load Rewarded Ad ------------------------>
   // Function to create a rewarded ad.
   Future<void> createRewardedAd(BuildContext context) async {
-
-    if(!AdmobEasy.instance.isConnected.value){
+    if (!AdmobEasy.instance.isConnected.value) {
       log('No Internet! Rewarded ad cannot load');
       return;
     }
@@ -75,7 +74,6 @@ mixin AppRewardedAd {
     void Function(RewardedAd, AdError)? onAdFailedToShowFullScreenContent,
     void Function(AdWithoutView, RewardItem)? onUserEarnedReward,
   }) async {
-
     // Check if the rewarded ad is loaded
     if (rewardedAd == null) {
       if (!context.mounted) return; // Return if the context is not mounted
@@ -84,8 +82,7 @@ mixin AppRewardedAd {
     }
 
     // Set callbacks and show the rewarded ad
-    rewardedAd!.fullScreenContentCallback =
-        FullScreenContentCallback(
+    rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: onAdShowedFullScreenContent,
       // Set callback for when ad is shown
       onAdDismissedFullScreenContent: (RewardedAd ad) {
