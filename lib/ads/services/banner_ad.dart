@@ -24,7 +24,12 @@ import 'package:admob_easy/ads/sources.dart';
 import 'package:flutter/material.dart';
 
 class AdMobEasyBanner extends StatefulWidget {
-  const AdMobEasyBanner({super.key});
+  final AdSize adSize;
+
+  const AdMobEasyBanner({
+    super.key,
+    this.adSize = AdSize.banner,
+  });
 
   @override
   State<AdMobEasyBanner> createState() => _AdMobEasyBannerState();
@@ -48,7 +53,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
     BannerAd(
       adUnitId: AdmobEasy.instance.bannerAdID,
       request: const AdRequest(),
-      size: AdSize.banner,
+      size: widget.adSize,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           if (mounted) {
