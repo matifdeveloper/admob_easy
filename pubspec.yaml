@@ -16,6 +16,7 @@ dependencies:
   google_mobile_ads: ^5.1.0
   async_preferences: ^1.0.0
   connectivity_plus: ^6.0.3
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

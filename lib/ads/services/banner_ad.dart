@@ -19,6 +19,7 @@
  */
 
 import 'dart:developer';
+import 'package:shimmer/shimmer.dart';
 import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:admob_easy/ads/sources.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
       return;
     }
 
+    _admobBannerAd?.dispose();
     _admobBannerAd = null;
 
     BannerAd(
@@ -86,11 +88,14 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
         : SizedBox(
             width: _admobBannerAd!.size.width.toDouble(),
             height: _admobBannerAd!.size.height.toDouble(),
-            child: AdWidget(
-              ad: _admobBannerAd!,
-              key: UniqueKey(),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: AdWidget(
+                ad: _admobBannerAd!,
+                key: UniqueKey(),
+              ),
             ),
           );
   }
-
 }
