@@ -35,8 +35,7 @@ class AdMobEasyBanner extends StatefulWidget {
   State<AdMobEasyBanner> createState() => _AdMobEasyBannerState();
 }
 
-class _AdMobEasyBannerState extends State<AdMobEasyBanner>
-    with AutomaticKeepAliveClientMixin {
+class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
   BannerAd? _admobBannerAd;
 
   @override
@@ -81,9 +80,6 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner>
 
   @override
   Widget build(BuildContext context) {
-    // Calling super.build(context) to indicate to the framework to keep the state alive
-    super.build(context);
-
     return _admobBannerAd == null
         ? const SizedBox
             .shrink() // Return an empty SizedBox if banner ad is null
@@ -97,6 +93,4 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner>
           );
   }
 
-  @override
-  bool get wantKeepAlive => true; // Ensuring the widget's state is kept alive
 }
