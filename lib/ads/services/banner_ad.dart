@@ -19,10 +19,10 @@
  */
 
 import 'dart:developer';
-import 'package:shimmer/shimmer.dart';
 import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:admob_easy/ads/sources.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 class AdMobEasyBanner extends StatefulWidget {
   final AdSize adSize;
@@ -38,6 +38,7 @@ class AdMobEasyBanner extends StatefulWidget {
 
 class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
   BannerAd? _admobBannerAd;
+  bool _isAdLoading = true;
 
   @override
   void initState() {
@@ -51,7 +52,6 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
       return;
     }
 
-    _admobBannerAd?.dispose();
     _admobBannerAd = null;
 
     BannerAd(
@@ -63,12 +63,16 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
           if (mounted) {
             setState(() {
               _admobBannerAd = ad as BannerAd;
+              _isAdLoading = false;
             });
           }
         },
         onAdFailedToLoad: (ads, error) {
           log("Failed to load ad ${error.message}");
           ads.dispose();
+          setState(() {
+            _isAdLoading = false;
+          });
         },
       ),
     ).load();
@@ -82,20 +86,39 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
 
   @override
   Widget build(BuildContext context) {
-    return _admobBannerAd == null
-        ? const SizedBox
-            .shrink() // Return an empty SizedBox if banner ad is null
-        : SizedBox(
-            width: _admobBannerAd!.size.width.toDouble(),
-            height: _admobBannerAd!.size.height.toDouble(),
-            child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: AdWidget(
-                ad: _admobBannerAd!,
-                key: UniqueKey(),
+    return _isAdLoading
+        ? Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: widget.adSize.width.toDouble(),
+        height: widget.adSize.height.toDouble(),
+        color: Colors.white,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Text(
+                'Ad',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[600],
+                ),
               ),
             ),
-          );
+          ],
+        ),
+      ),
+    )
+        : SizedBox(
+      width: _admobBannerAd!.size.width.toDouble(),
+      height: _admobBannerAd!.size.height.toDouble(),
+      child: AdWidget(
+        ad: _admobBannerAd!,
+        key: UniqueKey(),
+      ),
+    );
   }
 }
