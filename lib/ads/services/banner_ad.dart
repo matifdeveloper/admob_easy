@@ -22,6 +22,7 @@ import 'dart:developer';
 import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:admob_easy/ads/sources.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
 
 class AdMobEasyBanner extends StatefulWidget {
@@ -52,9 +53,16 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
       return;
     }
 
-    _admobBannerAd = null;
+    _loadBannerAd();
+  }
 
-    BannerAd(
+  void _loadBannerAd() {
+    setState(() {
+      _isAdLoading = true;
+    });
+
+    _admobBannerAd?.dispose();
+    _admobBannerAd = BannerAd(
       adUnitId: AdmobEasy.instance.bannerAdID,
       request: const AdRequest(),
       size: widget.adSize,
@@ -73,9 +81,13 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
           setState(() {
             _isAdLoading = false;
           });
+          // Retry loading the ad after some delay
+          Future.delayed(const Duration(seconds: 10), _loadBannerAd);
         },
       ),
-    ).load();
+    );
+
+    _admobBannerAd!.load();
   }
 
   @override
@@ -117,7 +129,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
       height: _admobBannerAd!.size.height.toDouble(),
       child: AdWidget(
         ad: _admobBannerAd!,
-        key: UniqueKey(),
+        key: UniqueKey(), // Ensure the widget is unique
       ),
     );
   }
