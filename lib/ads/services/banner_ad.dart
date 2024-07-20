@@ -99,38 +99,38 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
   Widget build(BuildContext context) {
     return _isAdLoading
         ? Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: Container(
-        width: widget.adSize.width.toDouble(),
-        height: widget.adSize.height.toDouble(),
-        color: Colors.white,
-        child: Stack(
-          children: [
-            Positioned(
-              top: 8,
-              left: 8,
-              child: Text(
-                'Ad',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[600],
-                ),
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              width: widget.adSize.width.toDouble(),
+              height: widget.adSize.height.toDouble(),
+              color: Colors.white,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Text(
+                      'Ad',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    )
+          )
         : SizedBox(
-      width: _admobBannerAd!.size.width.toDouble(),
-      height: _admobBannerAd!.size.height.toDouble(),
-      child: AdWidget(
-        ad: _admobBannerAd!,
-        key: ValueKey(_admobBannerAd!.hashCode), // Ensure the widget is unique
-      ),
-    );
+            width: _admobBannerAd!.size.width.toDouble(),
+            height: _admobBannerAd!.size.height.toDouble(),
+            child: AdWidget(
+              ad: _admobBannerAd!,
+              key: ValueKey(
+                  _admobBannerAd!.hashCode), // Ensure the widget is unique
+            ),
+          );
   }
 }
-
