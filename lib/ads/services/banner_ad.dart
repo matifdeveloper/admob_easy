@@ -78,16 +78,18 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
 
   @override
   Widget build(BuildContext context) {
-    return _admobBannerAd == null
-        ? const SizedBox
-            .shrink() // Return an empty SizedBox if banner ad is null
-        : SizedBox(
-            width: _admobBannerAd!.size.width.toDouble(),
-            height: _admobBannerAd!.size.height.toDouble(),
-            child: AdWidget(
-              ad: _admobBannerAd!,
-              key: UniqueKey(),
-            ),
-          );
+    return StatefulBuilder(builder: (_, setState) {
+      return _admobBannerAd == null
+          ? const SizedBox
+              .shrink() // Return an empty SizedBox if banner ad is null
+          : SizedBox(
+              width: _admobBannerAd!.size.width.toDouble(),
+              height: _admobBannerAd!.size.height.toDouble(),
+              child: AdWidget(
+                ad: _admobBannerAd!,
+                key: UniqueKey(),
+              ),
+            );
+    });
   }
 }

@@ -2,25 +2,25 @@ name: admob_easy
 description: "Simplify your Flutter app's integration with Google AdMob for effortless monetization."
 homepage: https://github.com/matifdeveloper/admob_easy
 repository: https://github.com/matifdeveloper/admob_easy
-version: 0.0.6
+version: 0.0.7
 admob_easy:
   path: ../admob_easy
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: '>=3.4.3 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  google_mobile_ads: ^5.0.0
-  async_preferences: ^0.9.0
-  connectivity_plus: ^6.0.2
+  google_mobile_ads: ^5.1.0
+  async_preferences: ^1.0.0
+  connectivity_plus: ^6.0.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
