@@ -51,6 +51,8 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner>
       return;
     }
 
+    _admobBannerAd = null;
+
     BannerAd(
       adUnitId: AdmobEasy.instance.bannerAdID,
       request: const AdRequest(),
