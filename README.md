@@ -70,4 +70,12 @@ ValueListenableBuilder(
 You can also initialize connectivity checking using:<br />
 `AdmobEasy.instance.initConnectivity(onOnline(){}, onOffline(){});`
 
+## Support
+
+If you find this package useful and want to support its development, you can buy me a coffee:
+
+[![Buy Me a Coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.paypal.com/ncp/payment/D56UA3TJ5LQ7G)
+
+Thank you for your support!
+
 ### Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on <a href="https://github.com/matifdeveloper/admob_easy">GitHub</a>.
