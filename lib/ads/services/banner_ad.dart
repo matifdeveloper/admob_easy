@@ -60,10 +60,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
       _isAdLoading = true;
     });
 
-    // Dispose of the previous ad if it exists
     _admobBannerAd?.dispose();
-
-    // Create a new BannerAd instance
     _admobBannerAd = BannerAd(
       adUnitId: AdmobEasy.instance.bannerAdID,
       request: const AdRequest(),
@@ -77,9 +74,9 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
             });
           }
         },
-        onAdFailedToLoad: (ads, error) {
+        onAdFailedToLoad: (ad, error) {
           log("Failed to load ad ${error.message}");
-          ads.dispose();
+          ad.dispose();
           setState(() {
             _isAdLoading = false;
           });
@@ -102,37 +99,38 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
   Widget build(BuildContext context) {
     return _isAdLoading
         ? Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            child: Container(
-              width: widget.adSize.width.toDouble(),
-              height: widget.adSize.height.toDouble(),
-              color: Colors.white,
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Text(
-                      'Ad',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ),
-                ],
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: widget.adSize.width.toDouble(),
+        height: widget.adSize.height.toDouble(),
+        color: Colors.white,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Text(
+                'Ad',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[600],
+                ),
               ),
             ),
-          )
+          ],
+        ),
+      ),
+    )
         : SizedBox(
-            width: _admobBannerAd!.size.width.toDouble(),
-            height: _admobBannerAd!.size.height.toDouble(),
-            child: AdWidget(
-              ad: _admobBannerAd!,
-              key: UniqueKey(),
-            ),
-          );
+      width: _admobBannerAd!.size.width.toDouble(),
+      height: _admobBannerAd!.size.height.toDouble(),
+      child: AdWidget(
+        ad: _admobBannerAd!,
+        key: ValueKey(_admobBannerAd!.hashCode), // Ensure the widget is unique
+      ),
+    );
   }
 }
+
