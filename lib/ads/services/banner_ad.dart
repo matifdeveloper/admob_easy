@@ -35,7 +35,8 @@ class AdMobEasyBanner extends StatefulWidget {
   State<AdMobEasyBanner> createState() => _AdMobEasyBannerState();
 }
 
-class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
+class _AdMobEasyBannerState extends State<AdMobEasyBanner>
+    with AutomaticKeepAliveClientMixin {
   BannerAd? _admobBannerAd;
 
   @override
@@ -78,18 +79,22 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
 
   @override
   Widget build(BuildContext context) {
-    return StatefulBuilder(builder: (_, setState) {
-      return _admobBannerAd == null
-          ? const SizedBox
-              .shrink() // Return an empty SizedBox if banner ad is null
-          : SizedBox(
-              width: _admobBannerAd!.size.width.toDouble(),
-              height: _admobBannerAd!.size.height.toDouble(),
-              child: AdWidget(
-                ad: _admobBannerAd!,
-                key: UniqueKey(),
-              ),
-            );
-    });
+    // Calling super.build(context) to indicate to the framework to keep the state alive
+    super.build(context);
+
+    return _admobBannerAd == null
+        ? const SizedBox
+            .shrink() // Return an empty SizedBox if banner ad is null
+        : SizedBox(
+            width: _admobBannerAd!.size.width.toDouble(),
+            height: _admobBannerAd!.size.height.toDouble(),
+            child: AdWidget(
+              ad: _admobBannerAd!,
+              key: UniqueKey(),
+            ),
+          );
   }
+
+  @override
+  bool get wantKeepAlive => true; // Ensuring the widget's state is kept alive
 }
