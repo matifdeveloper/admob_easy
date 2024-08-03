@@ -25,13 +25,7 @@ import 'package:admob_easy/ads/services/rewarded_ad.dart';
 
 /// [AdmobEasy] class combines functionality from InitAd, AppRewardedAd, and OpenAppAd
 class AdmobEasy
-    with
-        InitAd,
-        AppRewardedAd,
-        OpenAppAd,
-        AppLifecycleReactor,
-        AdmobHelper,
-        ConnectivityController {
+    with InitAd, AppRewardedAd, OpenAppAd, AdmobHelper, ConnectivityController {
   // Singleton instance of AdmobEasy
   static final AdmobEasy _instance = AdmobEasy._internal();
 

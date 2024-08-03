@@ -98,7 +98,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
 
   @override
   Widget build(BuildContext context) {
-    return _isAdLoading
+    return _isAdLoading || _admobBannerAd == null
         ? Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
             highlightColor: Colors.grey[100]!,
@@ -130,7 +130,8 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
             child: AdWidget(
               ad: _admobBannerAd!,
               key: ValueKey(
-                  _admobBannerAd!.hashCode), // Ensure the widget is unique
+                _admobBannerAd!.hashCode,
+              ), // Ensure the widget is unique
             ),
           );
   }

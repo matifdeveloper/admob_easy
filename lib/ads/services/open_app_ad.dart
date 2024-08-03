@@ -94,8 +94,10 @@ mixin OpenAppAd {
 }
 
 /// Listens for app foreground events and shows app open ads.
-mixin AppLifecycleReactor {
+class AppLifecycleReactor {
   final AdmobEasy appOpenAdManager = AdmobEasy.instance;
+
+  AppLifecycleReactor();
 
   // Listen to app state changes.
   void openAppAdListener() {
