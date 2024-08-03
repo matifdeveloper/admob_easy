@@ -30,8 +30,10 @@ mixin InitAd {
   /// Asynchronously creates and loads an [interstitial] ad.
   Future<void> createInterstitialAd(BuildContext context,
       {bool load = true}) async {
-    if (!AdmobEasy.instance.isConnected.value || !load) {
-      log('No Internet! Interstitial ad cannot load');
+    if (!AdmobEasy.instance.isConnected.value ||
+        !load ||
+        AdmobEasy.instance.initAdID.isEmpty) {
+      log('Interstitial ad cannot load');
       return;
     }
 

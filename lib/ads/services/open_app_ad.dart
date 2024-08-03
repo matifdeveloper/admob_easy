@@ -43,10 +43,7 @@ mixin OpenAppAd {
 
   // Function to load an AppOpenAd.
   void loadAppOpenAd() {
-    if (!AdmobEasy.instance.isConnected.value) {
-      log('No Internet! App open ad cannot load');
-      return;
-    }
+    if (AdmobEasy.instance.appOpenAdID.isEmpty) return;
 
     AppOpenAd.load(
       adUnitId: AdmobEasy.instance.appOpenAdID,
@@ -97,13 +94,11 @@ mixin OpenAppAd {
 }
 
 /// Listens for app foreground events and shows app open ads.
-class AppLifecycleReactor {
+mixin AppLifecycleReactor {
   final AdmobEasy appOpenAdManager = AdmobEasy.instance;
 
-  AppLifecycleReactor();
-
   // Listen to app state changes.
-  void listenToAppStateChanges() {
+  void openAppAdListener() {
     AppStateEventNotifier.startListening();
     AppStateEventNotifier.appStateStream
         .forEach((state) => _onAppStateChanged(state));
