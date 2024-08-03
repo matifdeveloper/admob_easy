@@ -38,7 +38,7 @@ class AdMobEasyBanner extends StatefulWidget {
 
 class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
   BannerAd? _admobBannerAd;
-  bool _isAdLoading = true;
+  final ValueNotifier<bool> _isAdLoading = ValueNotifier(true);
 
   @override
   void initState() {
@@ -50,6 +50,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
     if (!AdmobEasy.instance.isConnected.value ||
         AdmobEasy.instance.bannerAdID.isEmpty) {
       log('Banner ad cannot load');
+      _isAdLoading.value = false; // Set loading to false if ad cannot load
       return;
     }
 
@@ -57,9 +58,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
   }
 
   void _loadBannerAd() {
-    setState(() {
-      _isAdLoading = true;
-    });
+    _isAdLoading.value = true;
 
     _admobBannerAd?.dispose();
     _admobBannerAd = BannerAd(
@@ -69,18 +68,15 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           if (mounted) {
-            setState(() {
-              _admobBannerAd = ad as BannerAd;
-              _isAdLoading = false;
-            });
+            _admobBannerAd = ad as BannerAd;
+            _isAdLoading.value = false;
           }
         },
         onAdFailedToLoad: (ad, error) {
           log("Failed to load ad ${error.message}");
           ad.dispose();
-          setState(() {
-            _isAdLoading = false;
-          });
+          _admobBannerAd = null;
+          _isAdLoading.value = false;
           // Retry loading the ad after some delay
           Future.delayed(const Duration(seconds: 10), _loadBannerAd);
         },
@@ -93,46 +89,53 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
   @override
   void dispose() {
     _admobBannerAd?.dispose();
+    _isAdLoading.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _isAdLoading || _admobBannerAd == null
-        ? Shimmer.fromColors(
+    return ValueListenableBuilder<bool>(
+      valueListenable: _isAdLoading,
+      builder: (context, isAdLoading, child) {
+        if (isAdLoading) {
+          return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
             highlightColor: Colors.grey[100]!,
             child: Container(
               width: widget.adSize.width.toDouble(),
               height: widget.adSize.height.toDouble(),
               color: Colors.white,
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Text(
-                      'Ad',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
-                      ),
-                    ),
+              child: Center(
+                child: Text(
+                  'Ad',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[600],
                   ),
-                ],
+                ),
               ),
             ),
-          )
-        : SizedBox(
-            width: _admobBannerAd!.size.width.toDouble(),
-            height: _admobBannerAd!.size.height.toDouble(),
-            child: AdWidget(
-              ad: _admobBannerAd!,
-              key: ValueKey(
-                _admobBannerAd!.hashCode,
-              ), // Ensure the widget is unique
-            ),
           );
+        }
+
+        if (_admobBannerAd == null) {
+          // Return empty container if ad failed to load and is not available
+          return const SizedBox.shrink();
+        }
+
+        return SizedBox(
+          width: _admobBannerAd!.size.width.toDouble(),
+          height: _admobBannerAd!.size.height.toDouble(),
+          child: AdWidget(
+            ad: _admobBannerAd!,
+            key: ValueKey(
+              _admobBannerAd!.hashCode,
+            ), // Ensure the widget is unique
+          ),
+        );
+      },
+    );
   }
 }
