@@ -1,3 +1,3 @@
-## 1.0.1
+## 1.0.2
 
-* Minor bugs solved
+* Collapsible banner ad added

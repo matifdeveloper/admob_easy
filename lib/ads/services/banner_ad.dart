@@ -24,12 +24,21 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
 
+enum CollapseGravity {
+  top,
+  bottom,
+}
+
 class AdMobEasyBanner extends StatefulWidget {
   final AdSize adSize;
+  final bool isCollapsible;
+  final CollapseGravity collapseGravity;
 
   const AdMobEasyBanner({
     super.key,
     this.adSize = AdSize.banner,
+    this.isCollapsible = false,
+    this.collapseGravity = CollapseGravity.bottom,
   });
 
   @override
@@ -63,7 +72,11 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
     _admobBannerAd?.dispose();
     _admobBannerAd = BannerAd(
       adUnitId: AdmobEasy.instance.bannerAdID,
-      request: const AdRequest(),
+      request: AdRequest(
+        extras: widget.isCollapsible
+            ? {"collapsible": widget.collapseGravity.name}
+            : null,
+      ),
       size: widget.adSize,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
