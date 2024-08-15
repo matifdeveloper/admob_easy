@@ -97,8 +97,8 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
   /// Initializes the native ad.
   Future<void> _init() async {
     if (!_admobEasy.isConnected.value || _admobEasy.nativeAdID.isEmpty) {
-      log('Banner ad cannot load');
-      _nativeAdIsLoaded.value = false; // Set loading to false if ad cannot load
+      log('Admob not connected or ad unit ID is empty');
+      _nativeAdIsLoaded.value = false;
       return;
     }
 
@@ -107,59 +107,59 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
 
   /// Loads a native ad.
   void _loadAd() {
-    _nativeAd.value = NativeAd(
-        adUnitId: _admobEasy.nativeAdID,
-        listener: NativeAdListener(
-          onAdLoaded: (ad) {
-            log('$NativeAd loaded.');
-            _nativeAdIsLoaded.value = true;
-          },
-          onAdFailedToLoad: (ad, error) {
-            // Dispose the ad here to free resources.
-            log('$NativeAd failedToLoad: $error');
-            ad.dispose();
-          },
-          // Called when a click is recorded for a NativeAd.
-          onAdClicked: widget.onAdClicked,
-          // Called when an impression occurs on the ad.
-          onAdImpression: widget.onAdImpression,
-          // Called when an ad removes an overlay that covers the screen.
-          onAdClosed: widget.onAdClosed,
-          // Called when an ad opens an overlay that covers the screen.
-          onAdOpened: widget.onAdOpened,
-          // For iOS only. Called before dismissing a full screen view
-          onAdWillDismissScreen: widget.onAdWillDismissScreen,
-          // Called when an ad receives revenue value.
-          onPaidEvent: widget.onPaidEvent,
+    final ad = NativeAd(
+      adUnitId: _admobEasy.nativeAdID,
+      listener: NativeAdListener(
+        onAdLoaded: (ad) {
+          log('NativeAd loaded.');
+          _nativeAd.value = ad as NativeAd;
+          _nativeAdIsLoaded.value = true;
+        },
+        onAdFailedToLoad: (ad, error) {
+          log('NativeAd failedToLoad: $error');
+          ad.dispose();
+          _nativeAdIsLoaded.value = false;
+        },
+        onAdClicked: widget.onAdClicked,
+        onAdImpression: widget.onAdImpression,
+        onAdClosed: widget.onAdClosed,
+        onAdOpened: widget.onAdOpened,
+        onAdWillDismissScreen: widget.onAdWillDismissScreen,
+        onPaidEvent: widget.onPaidEvent,
+      ),
+      request: const AdRequest(),
+      nativeTemplateStyle: NativeTemplateStyle(
+        templateType: TemplateType.medium,
+        mainBackgroundColor: Colors.purple,
+        cornerRadius: 10.0,
+        callToActionTextStyle: NativeTemplateTextStyle(
+          textColor: Colors.cyan,
+          backgroundColor: Colors.red,
+          style: NativeTemplateFontStyle.monospace,
+          size: 16.0,
         ),
-        request: const AdRequest(),
-        // Styling
-        nativeTemplateStyle: NativeTemplateStyle(
-            // Required: Choose a template.
-            templateType: TemplateType.medium,
-            // Optional: Customize the ad's style.
-            mainBackgroundColor: Colors.purple,
-            cornerRadius: 10.0,
-            callToActionTextStyle: NativeTemplateTextStyle(
-                textColor: Colors.cyan,
-                backgroundColor: Colors.red,
-                style: NativeTemplateFontStyle.monospace,
-                size: 16.0),
-            primaryTextStyle: NativeTemplateTextStyle(
-                textColor: Colors.red,
-                backgroundColor: Colors.cyan,
-                style: NativeTemplateFontStyle.italic,
-                size: 16.0),
-            secondaryTextStyle: NativeTemplateTextStyle(
-                textColor: Colors.green,
-                backgroundColor: Colors.black,
-                style: NativeTemplateFontStyle.bold,
-                size: 16.0),
-            tertiaryTextStyle: NativeTemplateTextStyle(
-                textColor: Colors.brown,
-                backgroundColor: Colors.amber,
-                style: NativeTemplateFontStyle.normal,
-                size: 16.0)));
+        primaryTextStyle: NativeTemplateTextStyle(
+          textColor: Colors.red,
+          backgroundColor: Colors.cyan,
+          style: NativeTemplateFontStyle.italic,
+          size: 16.0,
+        ),
+        secondaryTextStyle: NativeTemplateTextStyle(
+          textColor: Colors.green,
+          backgroundColor: Colors.black,
+          style: NativeTemplateFontStyle.bold,
+          size: 16.0,
+        ),
+        tertiaryTextStyle: NativeTemplateTextStyle(
+          textColor: Colors.brown,
+          backgroundColor: Colors.amber,
+          style: NativeTemplateFontStyle.normal,
+          size: 16.0,
+        ),
+      ),
+    );
+
+    ad.load();
   }
 
   @override
@@ -179,10 +179,10 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
       valueListenable: _nativeAdIsLoaded,
-      builder: (context, isAdLoading, child) {
-        if (_nativeAd.value == null) {
-          // Return empty container if ad failed to load and is not available
-          return const SizedBox.shrink();
+      builder: (context, isAdLoaded, child) {
+        if (!isAdLoaded || _nativeAd.value == null) {
+          return const SizedBox
+              .shrink(); // Return an empty widget if ad is not loaded
         }
 
         return ConstrainedBox(
@@ -194,9 +194,7 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
           ),
           child: AdWidget(
             ad: _nativeAd.value!,
-            key: ValueKey(
-              _nativeAd.value!.hashCode,
-            ), // Ensure the widget is unique
+            key: ValueKey(_nativeAd.value!.hashCode),
           ),
         );
       },
