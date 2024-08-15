@@ -29,6 +29,7 @@ import 'package:admob_easy/ads/helper/admob_ump_helper.dart';
  * init = ca-app-pub-3940256099942544/1033173712
  * banner = ca-app-pub-3940256099942544/6300978111
  * app open = ca-app-pub-3940256099942544/9257395921
+ * native ad = ca-app-pub-3940256099942544/2247696110
  */
 
 ///
@@ -43,10 +44,12 @@ mixin AdmobHelper {
     String? androidRewardedAdID,
     String? androidInitAdID,
     String? androidBannerAdID,
+    String? androidNativeAdID,
     String? androidAppOpenAdID,
     String? iosRewardedAdID,
     String? iosInitAdID,
     String? iosBannerAdID,
+    String? iosNativeAdID,
     String? iosAppOpenAdID,
     List<String>? testDevices,
   }) {
@@ -58,6 +61,8 @@ mixin AdmobHelper {
         'init': Platform.isAndroid ? androidInitAdID : iosInitAdID,
         // Setting banner ad ID based on the platform (Android or iOS).
         'banner': Platform.isAndroid ? androidBannerAdID : iosBannerAdID,
+        // Setting native ad ID based on the platform (Android or iOS).
+        'native': Platform.isAndroid ? androidNativeAdID : iosNativeAdID,
         // Setting app open ad ID based on the platform (Android or iOS).
         'appOpen': Platform.isAndroid ? androidAppOpenAdID : iosAppOpenAdID,
       };
@@ -81,6 +86,9 @@ mixin AdmobHelper {
 
   // Getter method to retrieve banner ad ID.
   String get bannerAdID => _adIds['banner'] ?? '';
+
+  // Getter method to retrieve native ad ID.
+  String get nativeAdID => _adIds['native'] ?? '';
 
   // Getter method to retrieve app open ad ID.
   String get appOpenAdID => _adIds['appOpen'] ?? '';
