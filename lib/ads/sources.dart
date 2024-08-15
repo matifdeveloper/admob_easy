@@ -23,4 +23,5 @@ export 'services/init_ad.dart';
 export 'services/open_app_ad.dart';
 export 'services/rewarded_ad.dart';
 export 'services/banner_ad.dart';
+export 'services/admob_easy_native.dart';
 export 'package:google_mobile_ads/google_mobile_ads.dart';
