@@ -54,12 +54,15 @@ class AdmobEasyNative extends StatefulWidget {
   /// Called when the ad receives a paid event.
   final void Function(Ad, double, PrecisionType, String)? onPaidEvent;
 
+  final TemplateType templateType;
+
   /// A small template for the native ad.
   const AdmobEasyNative.smallTemplate({
     this.minWidth = 320,
     this.minHeight = 90,
     this.maxWidth = 400,
     this.maxHeight = 200,
+    this.templateType = TemplateType.small,
     super.key,
     this.onAdClicked,
     this.onAdClosed,
@@ -75,6 +78,7 @@ class AdmobEasyNative extends StatefulWidget {
     this.minHeight = 320,
     this.maxWidth = 400,
     this.maxHeight = 400,
+    this.templateType = TemplateType.medium,
     super.key,
     this.onAdClicked,
     this.onAdClosed,
@@ -129,33 +133,7 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
       ),
       request: const AdRequest(),
       nativeTemplateStyle: NativeTemplateStyle(
-        templateType: TemplateType.medium,
-        mainBackgroundColor: Colors.purple,
-        cornerRadius: 10.0,
-        callToActionTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.cyan,
-          backgroundColor: Colors.red,
-          style: NativeTemplateFontStyle.monospace,
-          size: 16.0,
-        ),
-        primaryTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.red,
-          backgroundColor: Colors.cyan,
-          style: NativeTemplateFontStyle.italic,
-          size: 16.0,
-        ),
-        secondaryTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.green,
-          backgroundColor: Colors.black,
-          style: NativeTemplateFontStyle.bold,
-          size: 16.0,
-        ),
-        tertiaryTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.brown,
-          backgroundColor: Colors.amber,
-          style: NativeTemplateFontStyle.normal,
-          size: 16.0,
-        ),
+        templateType: widget.templateType,
       ),
     );
 
