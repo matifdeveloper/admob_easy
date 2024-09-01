@@ -28,8 +28,11 @@ mixin InitAd {
   int _numInterstitialLoadAttempts = 0;
 
   /// Asynchronously creates and loads an [interstitial] ad.
-  Future<void> createInterstitialAd(BuildContext context,
-      {bool load = true}) async {
+  Future<void> createInterstitialAd(
+    BuildContext context, {
+    bool load = true,
+    int numInterstitialLoadAttempts = 5,
+  }) async {
     if (!AdmobEasy.instance.isConnected.value ||
         !load ||
         AdmobEasy.instance.initAdID.isEmpty) {
@@ -59,7 +62,7 @@ mixin InitAd {
           interstitialAd = null;
 
           // Retry loading if attempts are less than 5
-          if (_numInterstitialLoadAttempts < 5) {
+          if (_numInterstitialLoadAttempts < numInterstitialLoadAttempts) {
             createInterstitialAd(context);
           }
         },

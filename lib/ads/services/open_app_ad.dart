@@ -64,6 +64,7 @@ mixin OpenAppAd {
   // Function to show an AppOpenAd.
   void showOpenAppAd() {
     if (_appOpenAd == null || _isShowingAd) {
+      loadAppOpenAd();
       return;
     }
     _isShowingAd = true;

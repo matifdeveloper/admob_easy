@@ -25,13 +25,16 @@ import 'package:admob_easy/ads/sources.dart';
 
 mixin AppRewardedAd {
   RewardedAd? rewardedAd;
+
   // Counter for the number of load attempts for rewarded ads.
   int _numRewardedLoadAttempts = 0;
-  final int _maxFailedLoadAttempts = 5;
 
   /// <------------------------ Load Rewarded Ad ------------------------>
   // Function to create a rewarded ad.
-  Future<void> createRewardedAd(BuildContext context) async {
+  Future<void> createRewardedAd(
+    BuildContext context, {
+    int maxFailedLoadAttempts = 5,
+  }) async {
     if (!AdmobEasy.instance.isConnected.value ||
         AdmobEasy.instance.rewardedAdID.isEmpty) {
       log('Rewarded ad cannot load');
@@ -56,7 +59,7 @@ mixin AppRewardedAd {
           log(
             'Num Rewarded Load Attempts $_numRewardedLoadAttempts',
           );
-          if (_numRewardedLoadAttempts < _maxFailedLoadAttempts) {
+          if (_numRewardedLoadAttempts < maxFailedLoadAttempts) {
             createRewardedAd(context);
           } else {
             _numRewardedLoadAttempts = 0;
