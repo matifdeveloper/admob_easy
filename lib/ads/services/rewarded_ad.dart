@@ -51,7 +51,7 @@ mixin AppRewardedAd {
           rewardedAd = ad;
           _numRewardedLoadAttempts = 0;
         },
-        onAdFailedToLoad: (LoadAdError error) {
+        onAdFailedToLoad: (LoadAdError error) async {
           // Ad failed to load.
           log('RewardedAd failed to load: $error');
           rewardedAd = null;
@@ -60,7 +60,10 @@ mixin AppRewardedAd {
             'Num Rewarded Load Attempts $_numRewardedLoadAttempts',
           );
           if (_numRewardedLoadAttempts < maxFailedLoadAttempts) {
-            createRewardedAd(context);
+            await Future.delayed(const Duration(seconds: 2), () {
+              if (!context.mounted) return;
+              createRewardedAd(context);
+            });
           } else {
             _numRewardedLoadAttempts = 0;
           }

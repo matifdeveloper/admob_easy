@@ -1,3 +1,3 @@
-## 1.0.4
+## 1.1.0
 
-* minor changes
+* duration added in ad load

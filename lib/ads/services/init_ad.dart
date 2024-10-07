@@ -56,14 +56,17 @@ mixin InitAd {
           _numInterstitialLoadAttempts = 0;
           interstitialAd!.setImmersiveMode(true);
         },
-        onAdFailedToLoad: (LoadAdError error) {
+        onAdFailedToLoad: (LoadAdError error) async {
           log('InterstitialAd failed to load: $error.');
           _numInterstitialLoadAttempts += 1;
           interstitialAd = null;
 
           // Retry loading if attempts are less than 5
           if (_numInterstitialLoadAttempts < numInterstitialLoadAttempts) {
-            createInterstitialAd(context);
+            await Future.delayed(const Duration(seconds: 2), () {
+              if (!context.mounted) return;
+              createInterstitialAd(context);
+            });
           }
         },
       ),

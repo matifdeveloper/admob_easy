@@ -53,9 +53,11 @@ mixin OpenAppAd {
           _appOpenAd = ad;
           log('App open ad loaded');
         },
-        onAdFailedToLoad: (error) {
+        onAdFailedToLoad: (error) async {
           _appOpenAd = null;
-          log('App open ad failed');
+          await Future.delayed(const Duration(seconds: 2), () {
+            loadAppOpenAd();
+          });
         },
       ),
     );
