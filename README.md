@@ -53,6 +53,79 @@ AdmobEasy.instance.showRewardedAd(context);
 AdmobEasy.instance.showInterstitialAd(context);
 ```
 
+
+## **AdmobEasyNative Widget**
+
+The `AdmobEasyNative` widget provides a simple way to display native ads in your Flutter application using Admob. It allows for two types of ad templates, `small` and `medium`, which are ideal for different ad placements within the UI.
+
+### Usage
+
+You can integrate `AdmobEasyNative` as either a small or medium template by specifying the relevant constructor:
+
+#### Example (Small Native Ad):
+```
+AdmobEasyNative.smallTemplate(
+  minWidth: 320,
+  minHeight: 90,
+  maxWidth: 400,
+  maxHeight: 200,
+  onAdClicked: (ad) => print("Ad Clicked"),
+  onAdImpression: (ad) => print("Ad Impression Logged"),
+  onAdClosed: (ad) => print("Ad Closed"),
+);
+```
+
+#### Example (Medium Native Ad):
+```
+AdmobEasyNative.mediumTemplate(
+  minWidth: 320,
+  minHeight: 320,
+  maxWidth: 400,
+  maxHeight: 400,
+  onAdOpened: (ad) => print("Ad Opened"),
+  onAdClosed: (ad) => print("Ad Closed"),
+  onPaidEvent: (ad, value, precision, currencyCode) {
+    print("Paid event: $value $currencyCode with precision: $precision");
+  },
+);
+```
+
+### Parameters:
+
+- `minWidth`: Minimum width of the native ad.
+- `minHeight`: Minimum height of the native ad.
+- `maxWidth`: Maximum width of the native ad.
+- `maxHeight`: Maximum height of the native ad.
+- `onAdClicked`: Callback when the ad is clicked.
+- `onAdImpression`: Callback when the ad impression is logged.
+- `onAdClosed`: Callback when the ad is closed.
+- `onAdOpened`: Callback when the ad is opened.
+- `onAdWillDismissScreen`: Callback when the ad is about to dismiss the screen.
+- `onPaidEvent`: Callback for handling paid events from the ad.
+
+### Example Implementation:
+```
+class NativeAdScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Native Ad Example')),
+      body: Center(
+        child: AdmobEasyNative.smallTemplate(
+          minWidth: 320,
+          minHeight: 90,
+          maxWidth: 400,
+          maxHeight: 200,
+        ),
+      ),
+    );
+  }
+}
+```
+
+By incorporating `AdmobEasyNative`, you can easily display native ads to users, customize their size, and handle ad events like clicks and impressions for improved engagement and monetization.
+
+
 ### Internet Connectivity
 Admob Easy now automatically checks if the device is connected to mobile data or Wi-Fi before loading ads. Additionally, users can check internet connectivity status using the following methods:<br/>
 `AdmobEasy.instance.isConnected.value; // Returns true if connected, false otherwise`
