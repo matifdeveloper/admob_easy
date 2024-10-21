@@ -18,7 +18,6 @@
  ********************************************************************************
  */
 
-import 'dart:developer';
 import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -55,10 +54,11 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
     _init();
   }
 
+  final admobEasy = AdmobEasy.instance;
+
   Future<void> _init() async {
-    if (!AdmobEasy.instance.isConnected.value ||
-        AdmobEasy.instance.bannerAdID.isEmpty) {
-      log('Banner ad cannot load');
+    if (!admobEasy.isConnected.value || admobEasy.bannerAdID.isEmpty) {
+      admobEasy.error('Banner ad cannot load');
       _isAdLoading.value = false; // Set loading to false if ad cannot load
       return;
     }
@@ -71,7 +71,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
 
     _admobBannerAd?.dispose();
     _admobBannerAd = BannerAd(
-      adUnitId: AdmobEasy.instance.bannerAdID,
+      adUnitId: admobEasy.bannerAdID,
       request: AdRequest(
         extras: widget.isCollapsible
             ? {"collapsible": widget.collapseGravity.name}
@@ -86,7 +86,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
           }
         },
         onAdFailedToLoad: (ad, error) {
-          log("Failed to load ad ${error.message}");
+          admobEasy.error("Failed to load ad ${error.message}");
           ad.dispose();
           _admobBannerAd = null;
           _isAdLoading.value = false;

@@ -18,8 +18,6 @@
  ********************************************************************************
  */
 
-import 'dart:developer';
-
 import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:admob_easy/ads/sources.dart';
 
@@ -40,80 +38,103 @@ mixin OpenAppAd {
   /// App open ads area
   AppOpenAd? _appOpenAd;
   bool _isShowingAd = false;
+  int _numAppOpenAdLoadAttempts = 0;
 
-  // Function to load an AppOpenAd.
-  void loadAppOpenAd() {
-    if (AdmobEasy.instance.appOpenAdID.isEmpty) return;
+  final admobEasy = AdmobEasy.instance;
+
+  /// <------------------------ Load AppOpenAd with Exponential Backoff ------------------------>
+  void loadAppOpenAd({
+    int maxLoadAttempts = 5,
+    int attemptDelayFactorMs = 500,
+  }) {
+    if (admobEasy.appOpenAdID.isEmpty || _isShowingAd) return;
+
+    // Dispose existing ad if present
+    if (_appOpenAd != null) {
+      _appOpenAd!.dispose();
+      _appOpenAd = null;
+    }
 
     AppOpenAd.load(
-      adUnitId: AdmobEasy.instance.appOpenAdID,
+      adUnitId: admobEasy.appOpenAdID,
       request: const AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {
           _appOpenAd = ad;
-          log('App open ad loaded');
+          _numAppOpenAdLoadAttempts = 0; // Reset attempt counter
+          admobEasy.success('App open ad loaded');
         },
         onAdFailedToLoad: (error) async {
+          admobEasy.error('AppOpenAd failed to load: $error');
           _appOpenAd = null;
-          await Future.delayed(const Duration(seconds: 2), () {
-            loadAppOpenAd();
-          });
+          _numAppOpenAdLoadAttempts += 1;
+
+          // Retry with exponential backoff if attempts are less than maxLoadAttempts
+          if (_numAppOpenAdLoadAttempts < maxLoadAttempts) {
+            int delayMs = attemptDelayFactorMs * _numAppOpenAdLoadAttempts;
+            await Future.delayed(Duration(milliseconds: delayMs));
+            loadAppOpenAd(); // Retry loading the app open ad
+          } else {
+            _numAppOpenAdLoadAttempts = 0; // Reset after reaching max attempts
+          }
         },
       ),
     );
   }
 
-  // Function to show an AppOpenAd.
+  /// <------------------------ Show AppOpenAd ------------------------>
   void showOpenAppAd() {
     if (_appOpenAd == null || _isShowingAd) {
-      loadAppOpenAd();
+      loadAppOpenAd(); // Load an ad if none is available or already showing
       return;
     }
     _isShowingAd = true;
 
-    // Set the fullScreenContentCallback and show the ad.
+    // Set the fullScreenContentCallback to handle ad events
     _appOpenAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) {
         _isShowingAd = true;
-        log('$ad onAdShowedFullScreenContent');
+        admobEasy.info('$ad onAdShowedFullScreenContent');
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
-        log('$ad onAdFailedToShowFullScreenContent: $error');
+        admobEasy.error('$ad failed to show full screen content: $error');
         _isShowingAd = false;
         ad.dispose();
         _appOpenAd = null;
+        loadAppOpenAd(); // Load a new ad after failure
       },
       onAdDismissedFullScreenContent: (ad) {
-        log('$ad onAdDismissedFullScreenContent');
+        admobEasy.info('$ad dismissed');
         _isShowingAd = false;
         ad.dispose();
         _appOpenAd = null;
-        loadAppOpenAd();
+        loadAppOpenAd(); // Preload a new ad after dismissal
       },
     );
 
+    // Show the app open ad
     _appOpenAd!.show();
   }
 }
 
 /// Listens for app foreground events and shows app open ads.
 class AppLifecycleReactor {
-  final AdmobEasy appOpenAdManager = AdmobEasy.instance;
+  final admobEasy = AdmobEasy.instance; // Mixin instance
 
   AppLifecycleReactor();
 
-  // Listen to app state changes.
+  /// <------------------------ Start Listening for App State Changes ------------------------>
   void openAppAdListener() {
     AppStateEventNotifier.startListening();
     AppStateEventNotifier.appStateStream
         .forEach((state) => _onAppStateChanged(state));
   }
 
-  // Handle app state changes and show app open ads when the app is in the foreground.
+  /// <------------------------ Handle App State Changes ------------------------>
   void _onAppStateChanged(AppState appState) {
     if (appState == AppState.foreground) {
-      log('App in foreground');
-      appOpenAdManager.showOpenAppAd();
+      admobEasy.info('App moved to foreground');
+      admobEasy.showOpenAppAd();
     }
   }
 }

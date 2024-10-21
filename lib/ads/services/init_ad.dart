@@ -18,7 +18,6 @@
  ********************************************************************************
  */
 
-import 'dart:developer';
 import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:flutter/material.dart';
 import 'package:admob_easy/ads/sources.dart';
@@ -27,53 +26,56 @@ mixin InitAd {
   InterstitialAd? interstitialAd;
   int _numInterstitialLoadAttempts = 0;
 
-  /// Asynchronously creates and loads an [interstitial] ad.
+  final admobEasy = AdmobEasy.instance;
+
+  /// <------------------------ Load Interstitial Ad with Exponential Backoff ------------------------>
   Future<void> createInterstitialAd(
     BuildContext context, {
     bool load = true,
-    int numInterstitialLoadAttempts = 5,
+    int maxLoadAttempts = 5,
+    int attemptDelayFactorMs = 500, // Delay factor for exponential backoff
   }) async {
-    if (!AdmobEasy.instance.isConnected.value ||
-        !load ||
-        AdmobEasy.instance.initAdID.isEmpty) {
-      log('Interstitial ad cannot load');
+    if (!admobEasy.isConnected.value || !load || admobEasy.initAdID.isEmpty) {
+      admobEasy.error('Interstitial ad cannot load');
       return;
     }
 
-    // Dispose existing ad if present
+    // Dispose existing ad if present to prevent memory leaks
     if (interstitialAd != null) {
       interstitialAd!.dispose();
+      interstitialAd = null;
     }
 
-    // Load new interstitial ad
     await InterstitialAd.load(
-      adUnitId: AdmobEasy.instance.initAdID,
+      adUnitId: admobEasy.initAdID,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
-          log('$ad loaded');
+          admobEasy.success('$ad loaded');
           interstitialAd = ad;
           _numInterstitialLoadAttempts = 0;
-          interstitialAd!.setImmersiveMode(true);
+          interstitialAd!.setImmersiveMode(true); // Enable immersive mode
         },
         onAdFailedToLoad: (LoadAdError error) async {
-          log('InterstitialAd failed to load: $error.');
+          admobEasy.error('InterstitialAd failed to load: $error');
           _numInterstitialLoadAttempts += 1;
           interstitialAd = null;
 
-          // Retry loading if attempts are less than 5
-          if (_numInterstitialLoadAttempts < numInterstitialLoadAttempts) {
-            await Future.delayed(const Duration(seconds: 2), () {
-              if (!context.mounted) return;
-              createInterstitialAd(context);
-            });
+          // Retry with exponential backoff if attempts are less than maxLoadAttempts
+          if (_numInterstitialLoadAttempts < maxLoadAttempts) {
+            int delayMs = attemptDelayFactorMs * _numInterstitialLoadAttempts;
+            await Future.delayed(Duration(milliseconds: delayMs));
+            if (!context.mounted) return;
+            createInterstitialAd(context, load: true);
+          } else {
+            _numInterstitialLoadAttempts = 0; // Reset after max attempts
           }
         },
       ),
     );
   }
 
-  /// Displays the loaded [interstitial] ad.
+  /// <------------------------ Show Interstitial Ad ------------------------>
   void showInterstitialAd(
     BuildContext context, {
     void Function(InterstitialAd)? onAdShowedFullScreenContent,
@@ -82,33 +84,39 @@ mixin InitAd {
   }) {
     // Check if the interstitial ad is loaded
     if (interstitialAd == null) {
-      // If ad is not loaded, create a new one
-      if (!context.mounted) return; // Return if the context is not mounted
-      createInterstitialAd(context); // Create the interstitial ad
+      admobEasy.info('Interstitial ad not loaded, attempting to load...');
+      if (!context.mounted) return;
+      createInterstitialAd(context); // Load ad if not already loaded
       return;
     }
 
-    // Set callbacks and show the interstitial ad
+    // Set callbacks for full-screen content events and show the interstitial ad
     interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: onAdShowedFullScreenContent,
+      onAdShowedFullScreenContent: (InterstitialAd ad) {
+        if (onAdShowedFullScreenContent != null) {
+          onAdShowedFullScreenContent(ad);
+        }
+        admobEasy.success('Interstitial ad displayed.');
+      },
       onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        // Call the callback function when ad is dismissed
         if (onAdDismissedFullScreenContent != null) {
           onAdDismissedFullScreenContent(ad);
         }
-        debugPrint('$ad onAdDismissedFullScreenContent.');
-        interstitialAd = null; // Set ad to null after it's dismissed
-        ad.dispose(); // Dispose the ad object
-        if (!context.mounted) return; // Return if the context is not mounted
-        createInterstitialAd(context); // Create a new interstitial ad
+        admobEasy.info('$ad dismissed.');
+        interstitialAd = null; // Clear the reference to the ad
+        ad.dispose(); // Dispose the ad object to free resources
+
+        if (context.mounted) {
+          createInterstitialAd(context); // Preload the next ad after dismissal
+        }
       },
       onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        // Call the callback function when ad fails to show
         if (onAdFailedToShowFullScreenContent != null) {
           onAdFailedToShowFullScreenContent(ad, error);
         }
-        debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose(); // Dispose the ad object
+        admobEasy.error('Failed to show interstitial ad: $error');
+        ad.dispose();
+        interstitialAd = null; // Clear the reference to the failed ad
       },
     );
 

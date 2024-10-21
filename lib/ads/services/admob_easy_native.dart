@@ -18,7 +18,6 @@
  ********************************************************************************
  */
 
-import 'dart:developer';
 import 'package:admob_easy/admob_easy.dart';
 import 'package:flutter/material.dart';
 
@@ -101,7 +100,7 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
   /// Initializes the native ad.
   Future<void> _init() async {
     if (!_admobEasy.isConnected.value || _admobEasy.nativeAdID.isEmpty) {
-      log('Admob not connected or ad unit ID is empty');
+      _admobEasy.error('Admob not connected or ad unit ID is empty');
       _nativeAdIsLoaded.value = false;
       return;
     }
@@ -115,12 +114,12 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
       adUnitId: _admobEasy.nativeAdID,
       listener: NativeAdListener(
         onAdLoaded: (ad) {
-          log('NativeAd loaded.');
+          _admobEasy.success('NativeAd loaded.');
           _nativeAd.value = ad as NativeAd;
           _nativeAdIsLoaded.value = true;
         },
         onAdFailedToLoad: (ad, error) {
-          log('NativeAd failedToLoad: $error');
+          _admobEasy.error('NativeAd failedToLoad: $error');
           ad.dispose();
           _nativeAdIsLoaded.value = false;
         },

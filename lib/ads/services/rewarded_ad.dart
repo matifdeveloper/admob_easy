@@ -18,52 +18,49 @@
  ********************************************************************************
  */
 
-import 'dart:developer';
 import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:flutter/material.dart';
 import 'package:admob_easy/ads/sources.dart';
 
 mixin AppRewardedAd {
   RewardedAd? rewardedAd;
-
-  // Counter for the number of load attempts for rewarded ads.
   int _numRewardedLoadAttempts = 0;
+  final admobEasy = AdmobEasy.instance;
 
-  /// <------------------------ Load Rewarded Ad ------------------------>
-  // Function to create a rewarded ad.
+  /// <------------------------ Load Rewarded Ad with Exponential Backoff ------------------------>
   Future<void> createRewardedAd(
     BuildContext context, {
     int maxFailedLoadAttempts = 5,
+    int attemptDelayFactorMs = 500, // Delay factor for exponential backoff
   }) async {
-    if (!AdmobEasy.instance.isConnected.value ||
-        AdmobEasy.instance.rewardedAdID.isEmpty) {
-      log('Rewarded ad cannot load');
+    if (!admobEasy.isConnected.value || admobEasy.rewardedAdID.isEmpty) {
+      admobEasy.error('Rewarded ad cannot load');
       return;
     }
 
     await RewardedAd.load(
-      adUnitId: AdmobEasy.instance.rewardedAdID,
+      adUnitId: admobEasy.rewardedAdID,
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {
-          // Ad loaded successfully.
-          log('$ad loaded.');
+          admobEasy.success('$ad loaded.');
           rewardedAd = ad;
           _numRewardedLoadAttempts = 0;
         },
         onAdFailedToLoad: (LoadAdError error) async {
-          // Ad failed to load.
-          log('RewardedAd failed to load: $error');
+          admobEasy.error('RewardedAd failed to load: $error');
           rewardedAd = null;
           _numRewardedLoadAttempts += 1;
-          log(
+          admobEasy.warning(
             'Num Rewarded Load Attempts $_numRewardedLoadAttempts',
           );
+
+          // Apply exponential backoff if failed to load
           if (_numRewardedLoadAttempts < maxFailedLoadAttempts) {
-            await Future.delayed(const Duration(seconds: 2), () {
-              if (!context.mounted) return;
-              createRewardedAd(context);
-            });
+            int delayMs = attemptDelayFactorMs * _numRewardedLoadAttempts;
+            await Future.delayed(Duration(milliseconds: delayMs));
+            if (!context.mounted) return;
+            createRewardedAd(context);
           } else {
             _numRewardedLoadAttempts = 0;
           }
@@ -72,8 +69,7 @@ mixin AppRewardedAd {
     );
   }
 
-  /// <------------------------ Show Rewarded Ad ------------------------>
-// Function to show a rewarded ad.
+  /// <------------------------ Show Rewarded Ad with User Engagement Tracking ------------------------>
   Future<void> showRewardedAd(
     BuildContext context, {
     void Function(RewardedAd)? onAdShowedFullScreenContent,
@@ -81,44 +77,48 @@ mixin AppRewardedAd {
     void Function(RewardedAd, AdError)? onAdFailedToShowFullScreenContent,
     void Function(AdWithoutView, RewardItem)? onUserEarnedReward,
   }) async {
-    // Check if the rewarded ad is loaded
     if (rewardedAd == null) {
-      if (!context.mounted) return; // Return if the context is not mounted
-      createRewardedAd(context); // Create the rewarded ad
+      if (!context.mounted) return;
+      admobEasy.info("Ad not ready, attempting to load...");
+      await createRewardedAd(context); // Preload before showing again
       return;
     }
 
-    // Set callbacks and show the rewarded ad
     rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: onAdShowedFullScreenContent,
-      // Set callback for when ad is shown
+      onAdShowedFullScreenContent: (RewardedAd ad) {
+        if (onAdShowedFullScreenContent != null) {
+          onAdShowedFullScreenContent(ad);
+        }
+        admobEasy.success('Rewarded ad shown successfully.');
+      },
       onAdDismissedFullScreenContent: (RewardedAd ad) {
-        // Call the callback function when ad is dismissed
         if (onAdDismissedFullScreenContent != null) {
           onAdDismissedFullScreenContent(ad);
         }
-        rewardedAd == null; // Clear the reference to the ad
-        ad.dispose(); // Dispose the ad object
-        if (!context.mounted) return; // Return if the context is not mounted
-        createRewardedAd(context); // Create a new rewarded ad
+        ad.dispose();
+        rewardedAd = null; // Set to null after disposal
+        admobEasy.info('Ad dismissed by user. Preloading the next ad...');
+        if (context.mounted) {
+          createRewardedAd(context); // Preload next ad after dismissal
+        }
       },
       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-        // Call the callback function when ad fails to show
         if (onAdFailedToShowFullScreenContent != null) {
           onAdFailedToShowFullScreenContent(ad, error);
         }
-        ad.dispose(); // Dispose the ad object
+        ad.dispose();
+        rewardedAd = null;
+        admobEasy.error('Failed to show rewarded ad: $error');
       },
     );
 
-    // Show the rewarded ad
     await rewardedAd!.show(
-      onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+      onUserEarnedReward: (adWithoutView, rewardItem) {
+        admobEasy.success(
+            'User earned reward: ${rewardItem.amount} ${rewardItem.type}');
         if (onUserEarnedReward != null) {
-          onUserEarnedReward(ad, reward);
+          onUserEarnedReward(adWithoutView, rewardItem);
         }
-        // User earned a reward.
-        log('Earn with reward $RewardItem(${reward.amount}, ${reward.type})');
       },
     );
   }
