@@ -55,10 +55,9 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
     _init();
   }
 
-  final admobEasy = AdmobEasy.instance;
-
   Future<void> _init() async {
-    if (!admobEasy.isConnected.value || admobEasy.bannerAdID.isEmpty) {
+    if (!AdmobEasy.instance.isConnected.value ||
+        AdmobEasy.instance.bannerAdID.isEmpty) {
       AdmobEasyLogger.error('Banner ad cannot load');
       _isAdLoading.value = false; // Set loading to false if ad cannot load
       return;
@@ -72,7 +71,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
 
     _admobBannerAd?.dispose();
     _admobBannerAd = BannerAd(
-      adUnitId: admobEasy.bannerAdID,
+      adUnitId: AdmobEasy.instance.bannerAdID,
       request: AdRequest(
         extras: widget.isCollapsible
             ? {"collapsible": widget.collapseGravity.name}

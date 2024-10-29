@@ -1,4 +1,4 @@
-## 1.1.3
+## 1.1.4
 
 * **Exponential Backoff for Ad Load Retry**: Implemented exponential backoff mechanism for retrying failed app open ad loads, improving ad availability in unstable network conditions.
 * **Preload AppOpenAd After Dismissal**: Enhanced ad lifecycle by preloading a new app open ad immediately after one is dismissed, ensuring ads are ready for future app launches.

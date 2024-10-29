@@ -26,17 +26,14 @@ import 'package:admob_easy/ads/services/rewarded_ad.dart';
 /// [AdmobEasy] class combines functionality from InitAd, AppRewardedAd, and OpenAppAd
 class AdmobEasy
     with InitAd, AppRewardedAd, OpenAppAd, AdmobHelper, ConnectivityController {
-  // Singleton instance of AdmobEasy
-  static final AdmobEasy _instance = AdmobEasy._internal();
+  // Singleton instance of AdmobEasy, using a private constructor
+  static final AdmobEasy _instance = AdmobEasy._privateConstructor();
 
-  // Private constructor for singleton pattern
-  AdmobEasy._internal();
-
-  // Factory constructor to return the singleton instance
-  factory AdmobEasy() {
-    return _instance;
-  }
+  // Private named constructor for singleton pattern
+  AdmobEasy._privateConstructor();
 
   // Getter to access the singleton instance
   static AdmobEasy get instance => _instance;
+
+// Additional methods and properties can be added here as needed
 }

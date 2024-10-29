@@ -95,11 +95,10 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
   final _nativeAd = ValueNotifier<NativeAd?>(null);
   final _nativeAdIsLoaded = ValueNotifier<bool>(false);
 
-  final _admobEasy = AdmobEasy.instance;
-
   /// Initializes the native ad.
   Future<void> _init() async {
-    if (!_admobEasy.isConnected.value || _admobEasy.nativeAdID.isEmpty) {
+    if (!AdmobEasy.instance.isConnected.value ||
+        AdmobEasy.instance.nativeAdID.isEmpty) {
       AdmobEasyLogger.error('Admob not connected or ad unit ID is empty');
       _nativeAdIsLoaded.value = false;
       return;
@@ -111,7 +110,7 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
   /// Loads a native ad.
   void _loadAd() {
     final ad = NativeAd(
-      adUnitId: _admobEasy.nativeAdID,
+      adUnitId: AdmobEasy.instance.nativeAdID,
       listener: NativeAdListener(
         onAdLoaded: (ad) {
           AdmobEasyLogger.success('NativeAd loaded.');

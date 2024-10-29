@@ -41,14 +41,12 @@ mixin OpenAppAd {
   bool _isShowingAd = false;
   int _numAppOpenAdLoadAttempts = 0;
 
-  final admobEasy = AdmobEasy.instance;
-
   /// <------------------------ Load AppOpenAd with Exponential Backoff ------------------------>
   void loadAppOpenAd({
     int maxLoadAttempts = 5,
     int attemptDelayFactorMs = 500,
   }) {
-    if (admobEasy.appOpenAdID.isEmpty || _isShowingAd) return;
+    if (AdmobEasy.instance.appOpenAdID.isEmpty || _isShowingAd) return;
 
     // Dispose existing ad if present
     if (_appOpenAd != null) {
@@ -57,7 +55,7 @@ mixin OpenAppAd {
     }
 
     AppOpenAd.load(
-      adUnitId: admobEasy.appOpenAdID,
+      adUnitId: AdmobEasy.instance.appOpenAdID,
       request: const AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {

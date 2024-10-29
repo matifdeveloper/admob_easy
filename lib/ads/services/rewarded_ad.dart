@@ -26,7 +26,6 @@ import 'package:admob_easy/ads/sources.dart';
 mixin AppRewardedAd {
   RewardedAd? rewardedAd;
   int _numRewardedLoadAttempts = 0;
-  final admobEasy = AdmobEasy.instance;
 
   /// <------------------------ Load Rewarded Ad with Exponential Backoff ------------------------>
   Future<void> createRewardedAd(
@@ -34,13 +33,14 @@ mixin AppRewardedAd {
     int maxFailedLoadAttempts = 5,
     int attemptDelayFactorMs = 500, // Delay factor for exponential backoff
   }) async {
-    if (!admobEasy.isConnected.value || admobEasy.rewardedAdID.isEmpty) {
+    if (!AdmobEasy.instance.isConnected.value ||
+        AdmobEasy.instance.rewardedAdID.isEmpty) {
       AdmobEasyLogger.error('Rewarded ad cannot load');
       return;
     }
 
     await RewardedAd.load(
-      adUnitId: admobEasy.rewardedAdID,
+      adUnitId: AdmobEasy.instance.rewardedAdID,
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {

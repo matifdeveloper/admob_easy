@@ -27,8 +27,6 @@ mixin InitAd {
   InterstitialAd? interstitialAd;
   int _numInterstitialLoadAttempts = 0;
 
-  final admobEasy = AdmobEasy.instance;
-
   /// <------------------------ Load Interstitial Ad with Exponential Backoff ------------------------>
   Future<void> createInterstitialAd(
     BuildContext context, {
@@ -36,7 +34,9 @@ mixin InitAd {
     int maxLoadAttempts = 5,
     int attemptDelayFactorMs = 500, // Delay factor for exponential backoff
   }) async {
-    if (!admobEasy.isConnected.value || !load || admobEasy.initAdID.isEmpty) {
+    if (!AdmobEasy.instance.isConnected.value ||
+        !load ||
+        AdmobEasy.instance.initAdID.isEmpty) {
       AdmobEasyLogger.error('Interstitial ad cannot load');
       return;
     }
@@ -48,7 +48,7 @@ mixin InitAd {
     }
 
     await InterstitialAd.load(
-      adUnitId: admobEasy.initAdID,
+      adUnitId: AdmobEasy.instance.initAdID,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
