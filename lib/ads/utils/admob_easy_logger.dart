@@ -22,31 +22,31 @@ import 'package:flutter/foundation.dart';
 import 'dart:developer';
 
 mixin AdmobEasyLogger {
-  void warning(Object message) {
+  static void warning(Object message) {
     if (kDebugMode) {
       _logWithColor(message, '📢 Warning', 33);
     }
   }
 
-  void error(Object message) {
+  static void error(Object message) {
     if (kDebugMode) {
       _logWithColor(message, '❌ Error', 31);
     }
   }
 
-  void success(Object message) {
+  static void success(Object message) {
     if (kDebugMode) {
       _logWithColor(message, '✅ Success', 32);
     }
   }
 
-  void info(Object message) {
+  static void info(Object message) {
     if (kDebugMode) {
       _logWithColor(message, 'ℹ️ Info', 34);
     }
   }
 
-  void _logWithColor(Object message, String label, int colorCode) {
+  static void _logWithColor(Object message, String label, int colorCode) {
     final String separator =
         "\x1B[${colorCode}m==========================================================================================\x1B[0m";
     log(separator);

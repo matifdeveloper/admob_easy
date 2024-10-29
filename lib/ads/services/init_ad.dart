@@ -19,6 +19,7 @@
  */
 
 import 'package:admob_easy/ads/admob_easy.dart';
+import 'package:admob_easy/ads/utils/admob_easy_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:admob_easy/ads/sources.dart';
 
@@ -36,7 +37,7 @@ mixin InitAd {
     int attemptDelayFactorMs = 500, // Delay factor for exponential backoff
   }) async {
     if (!admobEasy.isConnected.value || !load || admobEasy.initAdID.isEmpty) {
-      admobEasy.error('Interstitial ad cannot load');
+      AdmobEasyLogger.error('Interstitial ad cannot load');
       return;
     }
 
@@ -51,13 +52,13 @@ mixin InitAd {
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
-          admobEasy.success('$ad loaded');
+          AdmobEasyLogger.success('$ad loaded');
           interstitialAd = ad;
           _numInterstitialLoadAttempts = 0;
           interstitialAd!.setImmersiveMode(true); // Enable immersive mode
         },
         onAdFailedToLoad: (LoadAdError error) async {
-          admobEasy.error('InterstitialAd failed to load: $error');
+          AdmobEasyLogger.error('InterstitialAd failed to load: $error');
           _numInterstitialLoadAttempts += 1;
           interstitialAd = null;
 
@@ -84,7 +85,7 @@ mixin InitAd {
   }) {
     // Check if the interstitial ad is loaded
     if (interstitialAd == null) {
-      admobEasy.info('Interstitial ad not loaded, attempting to load...');
+      AdmobEasyLogger.info('Interstitial ad not loaded, attempting to load...');
       if (!context.mounted) return;
       createInterstitialAd(context); // Load ad if not already loaded
       return;
@@ -96,13 +97,13 @@ mixin InitAd {
         if (onAdShowedFullScreenContent != null) {
           onAdShowedFullScreenContent(ad);
         }
-        admobEasy.success('Interstitial ad displayed.');
+        AdmobEasyLogger.success('Interstitial ad displayed.');
       },
       onAdDismissedFullScreenContent: (InterstitialAd ad) {
         if (onAdDismissedFullScreenContent != null) {
           onAdDismissedFullScreenContent(ad);
         }
-        admobEasy.info('$ad dismissed.');
+        AdmobEasyLogger.info('$ad dismissed.');
         interstitialAd = null; // Clear the reference to the ad
         ad.dispose(); // Dispose the ad object to free resources
 
@@ -114,7 +115,7 @@ mixin InitAd {
         if (onAdFailedToShowFullScreenContent != null) {
           onAdFailedToShowFullScreenContent(ad, error);
         }
-        admobEasy.error('Failed to show interstitial ad: $error');
+        AdmobEasyLogger.error('Failed to show interstitial ad: $error');
         ad.dispose();
         interstitialAd = null; // Clear the reference to the failed ad
       },

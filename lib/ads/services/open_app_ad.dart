@@ -20,6 +20,7 @@
 
 import 'package:admob_easy/ads/admob_easy.dart';
 import 'package:admob_easy/ads/sources.dart';
+import 'package:admob_easy/ads/utils/admob_easy_logger.dart';
 
 /**
  *  create instance of AppLifecycleReactor in first screen
@@ -62,10 +63,10 @@ mixin OpenAppAd {
         onAdLoaded: (ad) {
           _appOpenAd = ad;
           _numAppOpenAdLoadAttempts = 0; // Reset attempt counter
-          admobEasy.success('App open ad loaded');
+          AdmobEasyLogger.success('App open ad loaded');
         },
         onAdFailedToLoad: (error) async {
-          admobEasy.error('AppOpenAd failed to load: $error');
+          AdmobEasyLogger.error('AppOpenAd failed to load: $error');
           _appOpenAd = null;
           _numAppOpenAdLoadAttempts += 1;
 
@@ -94,17 +95,17 @@ mixin OpenAppAd {
     _appOpenAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) {
         _isShowingAd = true;
-        admobEasy.info('$ad onAdShowedFullScreenContent');
+        AdmobEasyLogger.info('$ad onAdShowedFullScreenContent');
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
-        admobEasy.error('$ad failed to show full screen content: $error');
+        AdmobEasyLogger.error('$ad failed to show full screen content: $error');
         _isShowingAd = false;
         ad.dispose();
         _appOpenAd = null;
         loadAppOpenAd(); // Load a new ad after failure
       },
       onAdDismissedFullScreenContent: (ad) {
-        admobEasy.info('$ad dismissed');
+        AdmobEasyLogger.info('$ad dismissed');
         _isShowingAd = false;
         ad.dispose();
         _appOpenAd = null;
@@ -133,7 +134,7 @@ class AppLifecycleReactor {
   /// <------------------------ Handle App State Changes ------------------------>
   void _onAppStateChanged(AppState appState) {
     if (appState == AppState.foreground) {
-      admobEasy.info('App moved to foreground');
+      AdmobEasyLogger.info('App moved to foreground');
       admobEasy.showOpenAppAd();
     }
   }

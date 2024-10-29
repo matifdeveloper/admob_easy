@@ -19,6 +19,7 @@
  */
 
 import 'package:admob_easy/ads/admob_easy.dart';
+import 'package:admob_easy/ads/utils/admob_easy_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
@@ -58,7 +59,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
 
   Future<void> _init() async {
     if (!admobEasy.isConnected.value || admobEasy.bannerAdID.isEmpty) {
-      admobEasy.error('Banner ad cannot load');
+      AdmobEasyLogger.error('Banner ad cannot load');
       _isAdLoading.value = false; // Set loading to false if ad cannot load
       return;
     }
@@ -86,7 +87,7 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
           }
         },
         onAdFailedToLoad: (ad, error) {
-          admobEasy.error("Failed to load ad ${error.message}");
+          AdmobEasyLogger.error("Failed to load ad ${error.message}");
           ad.dispose();
           _admobBannerAd = null;
           _isAdLoading.value = false;

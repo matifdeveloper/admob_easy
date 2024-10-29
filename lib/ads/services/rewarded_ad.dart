@@ -19,6 +19,7 @@
  */
 
 import 'package:admob_easy/ads/admob_easy.dart';
+import 'package:admob_easy/ads/utils/admob_easy_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:admob_easy/ads/sources.dart';
 
@@ -34,7 +35,7 @@ mixin AppRewardedAd {
     int attemptDelayFactorMs = 500, // Delay factor for exponential backoff
   }) async {
     if (!admobEasy.isConnected.value || admobEasy.rewardedAdID.isEmpty) {
-      admobEasy.error('Rewarded ad cannot load');
+      AdmobEasyLogger.error('Rewarded ad cannot load');
       return;
     }
 
@@ -43,15 +44,15 @@ mixin AppRewardedAd {
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {
-          admobEasy.success('$ad loaded.');
+          AdmobEasyLogger.success('$ad loaded.');
           rewardedAd = ad;
           _numRewardedLoadAttempts = 0;
         },
         onAdFailedToLoad: (LoadAdError error) async {
-          admobEasy.error('RewardedAd failed to load: $error');
+          AdmobEasyLogger.error('RewardedAd failed to load: $error');
           rewardedAd = null;
           _numRewardedLoadAttempts += 1;
-          admobEasy.warning(
+          AdmobEasyLogger.warning(
             'Num Rewarded Load Attempts $_numRewardedLoadAttempts',
           );
 
@@ -79,7 +80,7 @@ mixin AppRewardedAd {
   }) async {
     if (rewardedAd == null) {
       if (!context.mounted) return;
-      admobEasy.info("Ad not ready, attempting to load...");
+      AdmobEasyLogger.info("Ad not ready, attempting to load...");
       await createRewardedAd(context); // Preload before showing again
       return;
     }
@@ -89,7 +90,7 @@ mixin AppRewardedAd {
         if (onAdShowedFullScreenContent != null) {
           onAdShowedFullScreenContent(ad);
         }
-        admobEasy.success('Rewarded ad shown successfully.');
+        AdmobEasyLogger.success('Rewarded ad shown successfully.');
       },
       onAdDismissedFullScreenContent: (RewardedAd ad) {
         if (onAdDismissedFullScreenContent != null) {
@@ -97,7 +98,7 @@ mixin AppRewardedAd {
         }
         ad.dispose();
         rewardedAd = null; // Set to null after disposal
-        admobEasy.info('Ad dismissed by user. Preloading the next ad...');
+        AdmobEasyLogger.info('Ad dismissed by user. Preloading the next ad...');
         if (context.mounted) {
           createRewardedAd(context); // Preload next ad after dismissal
         }
@@ -108,13 +109,13 @@ mixin AppRewardedAd {
         }
         ad.dispose();
         rewardedAd = null;
-        admobEasy.error('Failed to show rewarded ad: $error');
+        AdmobEasyLogger.error('Failed to show rewarded ad: $error');
       },
     );
 
     await rewardedAd!.show(
       onUserEarnedReward: (adWithoutView, rewardItem) {
-        admobEasy.success(
+        AdmobEasyLogger.success(
             'User earned reward: ${rewardItem.amount} ${rewardItem.type}');
         if (onUserEarnedReward != null) {
           onUserEarnedReward(adWithoutView, rewardItem);

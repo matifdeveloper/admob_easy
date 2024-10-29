@@ -100,7 +100,7 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
   /// Initializes the native ad.
   Future<void> _init() async {
     if (!_admobEasy.isConnected.value || _admobEasy.nativeAdID.isEmpty) {
-      _admobEasy.error('Admob not connected or ad unit ID is empty');
+      AdmobEasyLogger.error('Admob not connected or ad unit ID is empty');
       _nativeAdIsLoaded.value = false;
       return;
     }
@@ -114,12 +114,12 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
       adUnitId: _admobEasy.nativeAdID,
       listener: NativeAdListener(
         onAdLoaded: (ad) {
-          _admobEasy.success('NativeAd loaded.');
+          AdmobEasyLogger.success('NativeAd loaded.');
           _nativeAd.value = ad as NativeAd;
           _nativeAdIsLoaded.value = true;
         },
         onAdFailedToLoad: (ad, error) {
-          _admobEasy.error('NativeAd failedToLoad: $error');
+          AdmobEasyLogger.error('NativeAd failedToLoad: $error');
           ad.dispose();
           _nativeAdIsLoaded.value = false;
         },
