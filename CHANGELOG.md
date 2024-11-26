@@ -1,3 +1,6 @@
+## 1.1.5
+* Downgraded the `google_mobile_ads`
+
 ## 1.1.4
 
 * **Exponential Backoff for Ad Load Retry**: Implemented exponential backoff mechanism for retrying failed app open ad loads, improving ad availability in unstable network conditions.
