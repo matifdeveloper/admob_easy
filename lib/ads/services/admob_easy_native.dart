@@ -157,8 +157,34 @@ class _AdmobEasyNativeState extends State<AdmobEasyNative> {
       valueListenable: _nativeAdIsLoaded,
       builder: (context, isAdLoaded, child) {
         if (!isAdLoaded || _nativeAd.value == null) {
-          return const SizedBox
-              .shrink(); // Return an empty widget if ad is not loaded
+          return Container(
+            width: widget.minWidth,
+            height: widget.minHeight,
+            color: Colors.white,
+            alignment: Alignment.topLeft,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Color(0xFFE88F1A),
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(12),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
+                child: Text(
+                  'Ad',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ); // Return an empty widget if ad is not loaded
         }
 
         return ConstrainedBox(

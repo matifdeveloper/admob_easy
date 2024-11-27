@@ -1,3 +1,6 @@
+## 1.1.6
+* Enhanced the loading effect of `banner` and `native` ad
+ 
 ## 1.1.5
 * Downgraded the `google_mobile_ads`
 
