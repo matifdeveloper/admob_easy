@@ -32,11 +32,12 @@ mixin InitAd {
     BuildContext context, {
     bool load = true,
     int maxLoadAttempts = 5,
-    int attemptDelayFactorMs = 500, // Delay factor for exponential backoff
+    int attemptDelayFactorMs = 500,
+    String? adId,
   }) async {
-    if (!AdmobEasy.instance.isConnected.value ||
-        !load ||
-        AdmobEasy.instance.initAdID.isEmpty) {
+    final instance = AdmobEasy.instance;
+    final initAdID = adId ?? instance.initAdID;
+    if (!instance.isConnected.value || !load || initAdID.isEmpty) {
       AdmobEasyLogger.error('Interstitial ad cannot load');
       return;
     }
@@ -48,7 +49,7 @@ mixin InitAd {
     }
 
     await InterstitialAd.load(
-      adUnitId: AdmobEasy.instance.initAdID,
+      adUnitId: initAdID,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
@@ -67,7 +68,13 @@ mixin InitAd {
             int delayMs = attemptDelayFactorMs * _numInterstitialLoadAttempts;
             await Future.delayed(Duration(milliseconds: delayMs));
             if (!context.mounted) return;
-            createInterstitialAd(context, load: true);
+            createInterstitialAd(
+              context,
+              load: true,
+              maxLoadAttempts: maxLoadAttempts,
+              attemptDelayFactorMs: attemptDelayFactorMs,
+              adId: adId,
+            );
           } else {
             _numInterstitialLoadAttempts = 0; // Reset after max attempts
           }

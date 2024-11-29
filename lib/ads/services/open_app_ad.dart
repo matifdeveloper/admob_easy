@@ -45,8 +45,11 @@ mixin OpenAppAd {
   void loadAppOpenAd({
     int maxLoadAttempts = 5,
     int attemptDelayFactorMs = 500,
+    String? adId,
   }) {
-    if (AdmobEasy.instance.appOpenAdID.isEmpty || _isShowingAd) return;
+    final instance = AdmobEasy.instance;
+    final appOpenAdID = adId ?? instance.appOpenAdID;
+    if (appOpenAdID.isEmpty || _isShowingAd) return;
 
     // Dispose existing ad if present
     if (_appOpenAd != null) {
@@ -55,7 +58,7 @@ mixin OpenAppAd {
     }
 
     AppOpenAd.load(
-      adUnitId: AdmobEasy.instance.appOpenAdID,
+      adUnitId: appOpenAdID,
       request: const AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {
@@ -72,7 +75,11 @@ mixin OpenAppAd {
           if (_numAppOpenAdLoadAttempts < maxLoadAttempts) {
             int delayMs = attemptDelayFactorMs * _numAppOpenAdLoadAttempts;
             await Future.delayed(Duration(milliseconds: delayMs));
-            loadAppOpenAd(); // Retry loading the app open ad
+            loadAppOpenAd(
+              maxLoadAttempts: maxLoadAttempts,
+              attemptDelayFactorMs: attemptDelayFactorMs,
+              adId: adId,
+            ); // Retry loading the app open ad
           } else {
             _numAppOpenAdLoadAttempts = 0; // Reset after reaching max attempts
           }

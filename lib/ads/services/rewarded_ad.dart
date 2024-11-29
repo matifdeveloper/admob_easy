@@ -31,16 +31,18 @@ mixin AppRewardedAd {
   Future<void> createRewardedAd(
     BuildContext context, {
     int maxFailedLoadAttempts = 5,
-    int attemptDelayFactorMs = 500, // Delay factor for exponential backoff
+    int attemptDelayFactorMs = 500,
+    String? adId,
   }) async {
-    if (!AdmobEasy.instance.isConnected.value ||
-        AdmobEasy.instance.rewardedAdID.isEmpty) {
+    final instance = AdmobEasy.instance;
+    final rewardedAdID = adId ?? instance.rewardedAdID;
+    if (!instance.isConnected.value || rewardedAdID.isEmpty) {
       AdmobEasyLogger.error('Rewarded ad cannot load');
       return;
     }
 
     await RewardedAd.load(
-      adUnitId: AdmobEasy.instance.rewardedAdID,
+      adUnitId: rewardedAdID,
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {
@@ -61,7 +63,12 @@ mixin AppRewardedAd {
             int delayMs = attemptDelayFactorMs * _numRewardedLoadAttempts;
             await Future.delayed(Duration(milliseconds: delayMs));
             if (!context.mounted) return;
-            createRewardedAd(context);
+            createRewardedAd(
+              context,
+              maxFailedLoadAttempts: maxFailedLoadAttempts,
+              attemptDelayFactorMs: attemptDelayFactorMs,
+              adId: adId,
+            );
           } else {
             _numRewardedLoadAttempts = 0;
           }

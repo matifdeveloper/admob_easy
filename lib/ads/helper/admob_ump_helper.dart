@@ -32,7 +32,7 @@ class AdmobUmp {
 
   /// Initializes Admob and handles consent forms if applicable.
   /// Returns a Future<FormError?> indicating the result of the initialization.
-  Future<FormError?> initializeUMP() async {
+  Future<FormError?> initializeUMP(List<String>? testDeviceIds) async {
     final completer = Completer<FormError?>();
     final params = ConsentRequestParameters(
         consentDebugSettings: ConsentDebugSettings(
@@ -44,10 +44,10 @@ class AdmobUmp {
       () async {
         if (await ConsentInformation.instance.isConsentFormAvailable()) {
           // Load Consent form if available.
-          await _loadConsentForm();
+          await _loadConsentForm(testDeviceIds);
         } else {
           // Continue with regular initialization.
-          await _initialize();
+          await _initialize(testDeviceIds);
         }
         completer.complete();
       },
@@ -61,7 +61,7 @@ class AdmobUmp {
 
   /// Opens the privacy preferences screen for the user to manage consent.
   /// Returns a Future<bool> indicating whether the user successfully updated their preferences.
-  Future<bool> changePrivacyPreferences() async {
+  Future<bool> changePrivacyPreferences(List<String>? testDeviceIds) async {
     final completer = Completer<bool>();
 
     ConsentInformation.instance.requestConsentInfoUpdate(
@@ -72,7 +72,7 @@ class AdmobUmp {
             (consentForm) {
               consentForm.show((formError) async {
                 // Continue with initialization after consent form is shown.
-                await _initialize();
+                await _initialize(testDeviceIds);
                 completer.complete(true);
                 log('');
               });
@@ -96,7 +96,7 @@ class AdmobUmp {
 
   /// Loads and displays the consent form if user consent is required.
   /// Returns a Future<FormError?> indicating the result of the operation.
-  Future<FormError?> _loadConsentForm() async {
+  Future<FormError?> _loadConsentForm(List<String>? testDeviceIds) async {
     final completer = Completer<FormError?>();
 
     ConsentForm.loadConsentForm(
@@ -106,11 +106,11 @@ class AdmobUmp {
           // Show consent form if consent is required.
           consentForm.show((formError) {
             // Reload consent form if an error occurs during showing.
-            completer.complete(_loadConsentForm());
+            completer.complete(_loadConsentForm(testDeviceIds));
           });
         } else {
           // Continue with initialization if consent is not required.
-          await _initialize();
+          await _initialize(testDeviceIds);
           completer.complete();
         }
       },
@@ -123,7 +123,7 @@ class AdmobUmp {
   }
 
   /// Initializes MobileAds for ad support.
-  Future<void> _initialize() async {
+  Future<void> _initialize(List<String>? testDeviceIds) async {
     MobileAds.instance
       ..initialize()
       ..updateRequestConfiguration(

@@ -1,3 +1,7 @@
+## 1.1.7
+* Now can pass ad id in function without constructor
+* Fixed the test devices bug
+
 ## 1.1.6
 * Enhanced the loading effect of `banner` and `native` ad
  

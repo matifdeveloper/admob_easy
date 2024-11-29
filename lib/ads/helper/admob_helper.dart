@@ -71,7 +71,7 @@ mixin AdmobHelper {
       AdmobEasy.instance.initConnectivity();
 
       /// Initializing Mobile Ads and updating request configuration with test IDs with UMP.
-      AdmobUmp.instance.initializeUMP();
+      AdmobUmp.instance.initializeUMP(testDevices);
     } catch (e) {
       // Throwing an exception if an error occurs during initialization.
       throw Exception("Error initializing Admob: $e");
