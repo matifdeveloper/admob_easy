@@ -1,4 +1,4 @@
-library admob_easy;
+library;
 
 export 'package:admob_easy/ads/admob_easy.dart';
 export 'ads/services/banner_ad.dart';

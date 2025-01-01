@@ -20,6 +20,7 @@
 
 import 'dart:async';
 import 'dart:developer';
+import 'package:admob_easy/ads/utils/admob_easy_logger.dart';
 import 'package:async_preferences/async_preferences.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -125,9 +126,11 @@ class AdmobUmp {
   /// Initializes MobileAds for ad support.
   Future<void> _initialize(List<String>? testDeviceIds) async {
     MobileAds.instance
-      ..initialize()
+      ..initialize().then((InitializationStatus status) {
+        AdmobEasyLogger.info('Initialization Status: $status');
+      })
       ..updateRequestConfiguration(
-        RequestConfiguration(testDeviceIds: []),
+        RequestConfiguration(testDeviceIds: testDeviceIds),
       );
   }
 

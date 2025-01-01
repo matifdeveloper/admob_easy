@@ -1,3 +1,6 @@
+## 1.1.8
+* Upgraded the `google_mobile_ads`
+
 ## 1.1.7
 * Now can pass ad id in function without constructor
 * Fixed the test devices bug
