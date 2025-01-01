@@ -40,7 +40,7 @@ mixin AdmobHelper {
   Map<String, String?> _adIds = {};
 
   // Method to initialize Admob IDs based on the platform.
-  void initialize({
+  Future<void> initialize({
     String? androidRewardedAdID,
     String? androidInitAdID,
     String? androidBannerAdID,
@@ -52,7 +52,7 @@ mixin AdmobHelper {
     String? iosNativeAdID,
     String? iosAppOpenAdID,
     List<String>? testDevices,
-  }) {
+  }) async{
     try {
       _adIds = {
         // Setting rewarded ad ID based on the platform (Android or iOS).
@@ -71,7 +71,7 @@ mixin AdmobHelper {
       AdmobEasy.instance.initConnectivity();
 
       /// Initializing Mobile Ads and updating request configuration with test IDs with UMP.
-      AdmobUmp.instance.initializeUMP(testDevices);
+      await AdmobUmp.instance.initializeUMP(testDevices);
     } catch (e) {
       // Throwing an exception if an error occurs during initialization.
       throw Exception("Error initializing Admob: $e");
