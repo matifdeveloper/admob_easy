@@ -13,9 +13,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_mobile_ads: ^5.2.0
+  google_mobile_ads: ^5.3.0
   async_preferences: ^1.0.1
-  connectivity_plus: ^6.1.0
+  connectivity_plus: ^6.1.2
   shimmer: ^3.0.0
 
 dev_dependencies:

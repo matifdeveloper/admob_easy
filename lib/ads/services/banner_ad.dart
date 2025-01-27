@@ -146,9 +146,57 @@ class _AdMobEasyBannerState extends State<AdMobEasyBanner> {
           );
         }
 
+        // if (_admobBannerAd == null) {
+        //   // Return empty container if ad failed to load and is not available
+        //   return const SizedBox.shrink();
+        // }
+
         if (_admobBannerAd == null) {
-          // Return empty container if ad failed to load and is not available
-          return const SizedBox.shrink();
+          // Return container with respective ad size when ad fails to load
+          switch (widget.adSize) {
+            case AdSize.banner:
+              return Container(
+                width: 320,
+                height: 50,
+                color: Colors.grey[300],
+                child: const Center(child: Text('Banner Ad')),
+              );
+            case AdSize.largeBanner:
+              return Container(
+                width: 320,
+                height: 100,
+                color: Colors.grey[300],
+                child: const Center(child: Text('Large Banner Ad')),
+              );
+            case AdSize.mediumRectangle:
+              return Container(
+                width: 300,
+                height: 250,
+                color: Colors.grey[300],
+                child: const Center(child: Text('Medium Rectangle Ad')),
+              );
+            case AdSize.fullBanner:
+              return Container(
+                width: 468,
+                height: 60,
+                color: Colors.grey[300],
+                child: const Center(child: Text('Full Banner Ad')),
+              );
+            case AdSize.leaderboard:
+              return Container(
+                width: 728,
+                height: 90,
+                color: Colors.grey[300],
+                child: const Center(child: Text('Leaderboard Ad')),
+              );
+            default:
+              return Container(
+                width: widget.adSize.width.toDouble(),
+                height: widget.adSize.height.toDouble(),
+                color: Colors.grey[300],
+                child: const Center(child: Text('Ad Placeholder')),
+              );
+          }
         }
 
         return SizedBox(
