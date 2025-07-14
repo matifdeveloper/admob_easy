@@ -52,7 +52,7 @@ mixin AdmobHelper {
     String? iosNativeAdID,
     String? iosAppOpenAdID,
     List<String>? testDevices,
-  }) async{
+  }) async {
     try {
       _adIds = {
         // Setting rewarded ad ID based on the platform (Android or iOS).

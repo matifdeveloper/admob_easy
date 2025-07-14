@@ -1,3 +1,6 @@
+## 2.0.0
+* Upgraded the `google_mobile_ads: ^6.0.0`
+
 ## 1.1.8
 * Upgraded the `google_mobile_ads`
 
