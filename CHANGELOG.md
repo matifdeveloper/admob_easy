@@ -1,3 +1,10 @@
+## 2.0.1
+* Added new **Native Ad Mixin API** for preload, show, and dispose control
+* Removed old `AdmobEasyNative` widget-based implementation
+* Added support for **custom ad unit IDs** (`adID`) in native ads
+* Improved memory management with proper `disposeNative()` method
+* Enhanced logging for ad lifecycle events
+
 ## 2.0.0
 * Upgraded the `google_mobile_ads: ^6.0.0`
 
@@ -10,12 +17,11 @@
 
 ## 1.1.6
 * Enhanced the loading effect of `banner` and `native` ad
- 
+
 ## 1.1.5
 * Downgraded the `google_mobile_ads`
 
 ## 1.1.4
-
 * **Exponential Backoff for Ad Load Retry**: Implemented exponential backoff mechanism for retrying failed app open ad loads, improving ad availability in unstable network conditions.
 * **Preload AppOpenAd After Dismissal**: Enhanced ad lifecycle by preloading a new app open ad immediately after one is dismissed, ensuring ads are ready for future app launches.
 * **Improved Error Handling & Logging**: Added more detailed error logs and failure recovery, enabling better insight into ad load issues and smoother ad presentation flow.

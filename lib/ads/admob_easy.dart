@@ -17,15 +17,21 @@
 
  *********************************************************************************/
 
+import 'package:admob_easy/admob_easy.dart';
 import 'package:admob_easy/ads/controllers/connectivity_controller.dart';
 import 'package:admob_easy/ads/helper/admob_helper.dart';
 import 'package:admob_easy/ads/services/init_ad.dart';
-import 'package:admob_easy/ads/services/open_app_ad.dart';
 import 'package:admob_easy/ads/services/rewarded_ad.dart';
 
 /// [AdmobEasy] class combines functionality from InitAd, AppRewardedAd, and OpenAppAd
 class AdmobEasy
-    with InitAd, AppRewardedAd, OpenAppAd, AdmobHelper, ConnectivityController {
+    with
+        InitAd,
+        AppRewardedAd,
+        OpenAppAd,
+        EasyNativeAd,
+        AdmobHelper,
+        ConnectivityController {
   // Singleton instance of AdmobEasy, using a private constructor
   static final AdmobEasy _instance = AdmobEasy._privateConstructor();
 
@@ -34,6 +40,4 @@ class AdmobEasy
 
   // Getter to access the singleton instance
   static AdmobEasy get instance => _instance;
-
-// Additional methods and properties can be added here as needed
 }
